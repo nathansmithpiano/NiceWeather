@@ -4,8 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import com.niceweatherjpa.entities.RelativeLocation;
-
 public class TestClientJPA {
 
 	private static EntityManagerFactory emf;
