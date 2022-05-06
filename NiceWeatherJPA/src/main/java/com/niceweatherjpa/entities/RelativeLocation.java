@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "relative_location")
 public class RelativeLocation {
@@ -21,11 +23,13 @@ public class RelativeLocation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
 	private Geometry geometry;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "relativeLocation")
 	private List<Point> pointList;
 

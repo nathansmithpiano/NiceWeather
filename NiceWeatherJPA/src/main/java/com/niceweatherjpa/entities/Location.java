@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "location")
 public class Location {
@@ -28,11 +30,12 @@ public class Location {
 	@ManyToOne
 	@JoinColumn(name = "coordinate_id")
 	private Coordinate coordinate;
-
+	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "location_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<Category> categoryList;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "mountain_range_id")
 	private MountainRange mountainRange;

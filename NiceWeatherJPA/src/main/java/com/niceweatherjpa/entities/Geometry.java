@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "geometry")
 public class Geometry {
@@ -23,17 +25,21 @@ public class Geometry {
 	private int id;
 
 	private String type;
-
+	
+	@JsonIgnore
 	@OneToOne(mappedBy = "geometry")
 	private Point point;
-
+	
+	@JsonIgnore
 	@OneToMany
 	@JoinTable(name = "geometry_coordinate", joinColumns = @JoinColumn(name = "geometry_id"), inverseJoinColumns = @JoinColumn(name = "coordinate_id"))
 	private List<Coordinate> coordinateList;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "geometry")
 	private List<RelativeLocation> relativeLocationList;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "geometry")
 	private List<Forecast> forecastList;
 

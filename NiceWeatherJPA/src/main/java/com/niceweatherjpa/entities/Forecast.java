@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "forecast")
 public class Forecast {
@@ -24,11 +26,13 @@ public class Forecast {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "point_forecast", joinColumns = @JoinColumn(name = "forecast_id"), inverseJoinColumns = @JoinColumn(name = "point_id"))
 	private List<Point> pointList;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "forecast")
 	private List<Period> periodList;
 

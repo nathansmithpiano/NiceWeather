@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "mountain_range")
 public class MountainRange {
@@ -22,14 +24,17 @@ public class MountainRange {
 	private int id;
 
 	private String name;
-
+	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "parent_id")
 	private MountainRange parent;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "parent")
 	private List<MountainRange> subRangeList;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "mountainRange")
 	private List<Location> locationList;
 
