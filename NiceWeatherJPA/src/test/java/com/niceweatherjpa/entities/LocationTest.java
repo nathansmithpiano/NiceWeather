@@ -50,12 +50,12 @@ class LocationTest {
 	@Test
 	void test_Location_Category_mapping() {
 		assertNotNull(location);
-		assertNotNull(location.getCategoryList());
-		assertTrue(location.getCategoryList().size() > 0);
-		assertEquals(1, location.getCategoryList().get(0).getId());
-		assertEquals("Peak", location.getCategoryList().get(0).getName());
-		assertEquals(3, location.getCategoryList().get(1).getId());
-		assertEquals("Colorado 14er", location.getCategoryList().get(1).getName());
+		assertNotNull(location.getCategories());
+		assertTrue(location.getCategories().size() > 0);
+		assertEquals(1, location.getCategories().get(0).getId());
+		assertEquals("Peak", location.getCategories().get(0).getName());
+		assertEquals(3, location.getCategories().get(1).getId());
+		assertEquals("Colorado 14er", location.getCategories().get(1).getName());
 	}
 	
 	@Test

@@ -7,5 +7,9 @@ import com.niceweatherjpa.entities.Location;
 public interface LocationService {
 	
 	List<Location> index();
+	Location findById(int id);
+	Location create(Location location);
+	Location update(Location location);
+	boolean deleteById(int id);
 
 }

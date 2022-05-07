@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,23 +27,27 @@ public class Location {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private String name;
-
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "coordinate_id")
 	private Coordinate coordinate;
 	
-	@JsonIgnore
-	@ManyToMany
-	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "location_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-	private List<Category> categoryList;
+	@ManyToMany(fetch = FetchType.EAGER, 
+			cascade = CascadeType.ALL)
+	@JoinTable(name = "location_category", 
+	joinColumns = @JoinColumn(name = "location_id"), 
+	inverseJoinColumns = @JoinColumn(name = "category_id"))
+	private List<Category> categories;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "mountain_range_id")
 	private MountainRange mountainRange;
 
-	@OneToOne(mappedBy = "location")
+	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
 	private Point point;
+	
+	private String name;
+	
+	private Double elevation;
 
 	public Location() {
 		super();
@@ -62,6 +68,14 @@ public class Location {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public Double getElevation() {
+		return elevation;
+	}
+
+	public void setElevation(Double elevation) {
+		this.elevation = elevation;
+	}
 
 	public Coordinate getCoordinate() {
 		return coordinate;
@@ -69,6 +83,8 @@ public class Location {
 
 	public void setCoordinate(Coordinate coordinate) {
 		this.coordinate = coordinate;
+		System.err.println("made it");
+		coordinate.addLocation(this);
 	}
 
 	public MountainRange getMountainRange() {
@@ -77,35 +93,38 @@ public class Location {
 
 	public void setMountainRange(MountainRange mountainRange) {
 		this.mountainRange = mountainRange;
+		mountainRange.addLocation(this);
 	}
 
-	public List<Category> getCategoryList() {
-		return categoryList;
+	public List<Category> getCategories() {
+		return categories;
 	}
 
-	public void setCategoryList(List<Category> categoryList) {
-		this.categoryList = categoryList;
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
 	}
 
 	public void addCategory(Category category) {
-		if (categoryList == null) {
-			categoryList = new ArrayList<>();
+		if (categories == null) {
+			categories = new ArrayList<>();
+			System.err.println("this shouldn't happen");
 		}
-		if (!categoryList.contains(category)) {
-			categoryList.add(category);
+		if (!categories.contains(category)) {
+			categories.add(category);
+			System.err.println("made it");
 		}
-		if (category.getLocationList().contains(this)) {
-			category.removeLocation(this);
-		}
+//		if (!category.getLocationList().contains(this)) {
+//			category.addLocation(this);
+//		}
 	}
 
 	public void removeCategory(Category category) {
-		if (categoryList != null && categoryList.contains(category)) {
-			categoryList.remove(category);
+		if (categories != null && categories.contains(category)) {
+			categories.remove(category);
 		}
-		if (category.getLocationList() != null && category.getLocationList().contains(this)) {
-			category.removeLocation(this);
-		}
+//		if (category.getLocationList() != null && category.getLocationList().contains(this)) {
+//			category.removeLocation(this);
+//		}
 	}
 
 	public Point getPoint() {
@@ -140,6 +159,8 @@ public class Location {
 		builder.append(id);
 		builder.append("\nname=");
 		builder.append(name);
+		builder.append("\nelevation=");
+		builder.append(elevation);
 		if (coordinate != null) {
 			builder.append("\ncoordinate.getLatitude()=");
 			builder.append(coordinate.getLatitude());
@@ -148,9 +169,9 @@ public class Location {
 		} else {
 			builder.append("\nNO POINT");
 		}
-		if (categoryList != null && categoryList.size() > 0) {
-			builder.append("\ncategoryList.size()=");
-			builder.append(categoryList.size());
+		if (categories != null && categories.size() > 0) {
+			builder.append("\ncategories.size()=");
+			builder.append(categories.size());
 		} else {
 			builder.append("\nNO CATEGORIES");
 		}

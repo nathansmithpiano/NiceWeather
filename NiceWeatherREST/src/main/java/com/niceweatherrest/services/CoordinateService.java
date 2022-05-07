@@ -7,5 +7,6 @@ import com.niceweatherjpa.entities.Coordinate;
 public interface CoordinateService {
 	
 	List<Coordinate> index();
+	Coordinate findById(int id);
 
 }

@@ -51,10 +51,10 @@ class CoordinateTest {
 	@Test
 	void test_Coordinate_Location_mapping() {
 		assertNotNull(coordinate);
-		assertNotNull(coordinate.getLocationList());
-		assertTrue(coordinate.getLocationList().size() > 0);
-		assertEquals(1, coordinate.getLocationList().get(0).getId());
-		assertEquals("Mt. Elbert", coordinate.getLocationList().get(0).getName());
+		assertNotNull(coordinate.getLocations());
+		assertTrue(coordinate.getLocations().size() > 0);
+		assertEquals(1, coordinate.getLocations().get(0).getId());
+		assertEquals("Mt. Elbert", coordinate.getLocations().get(0).getName());
 	}
 	
 	@Test

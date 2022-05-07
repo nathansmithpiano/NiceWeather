@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,18 +27,18 @@ public class MountainRange {
 
 	private String name;
 	
-	@JsonIgnore
-	@ManyToOne
+//	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "parent_id")
 	private MountainRange parent;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "parent")
-	private List<MountainRange> subRangeList;
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<MountainRange> subranges;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "mountainRange")
-	private List<Location> locationList;
+	@OneToMany(mappedBy = "mountainRange", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	private List<Location> locations;
 
 	public MountainRange() {
 		super();
@@ -66,52 +68,52 @@ public class MountainRange {
 		this.parent = parent;
 	}
 
-	public List<MountainRange> getSubRangeList() {
-		return subRangeList;
+	public List<MountainRange> getSubranges() {
+		return subranges;
 	}
 
-	public void setSubRangeList(List<MountainRange> subRangeList) {
-		this.subRangeList = subRangeList;
+	public void setSubranges(List<MountainRange> subranges) {
+		this.subranges = subranges;
 	}
 
-	public void addSubRange(MountainRange mountainRange) {
-		if (subRangeList == null) {
-			subRangeList = new ArrayList<>();
+	public void addSubrange(MountainRange mountainRange) {
+		if (subranges == null) {
+			subranges = new ArrayList<>();
 		}
-		if (!subRangeList.contains(mountainRange)) {
-			subRangeList.add(mountainRange);
+		if (!subranges.contains(mountainRange)) {
+			subranges.add(mountainRange);
 			mountainRange.setParent(this);
 		}
 	}
 
-	public void removeSubRange(MountainRange mountainRange) {
-		if (mountainRange != null && subRangeList.contains(mountainRange)) {
-			subRangeList.remove(mountainRange);
+	public void removeSubrange(MountainRange mountainRange) {
+		if (mountainRange != null && subranges.contains(mountainRange)) {
+			subranges.remove(mountainRange);
 			mountainRange.setParent(null);
 		}
 	}
 
-	public List<Location> getLocationList() {
-		return locationList;
+	public List<Location> getLocations() {
+		return locations;
 	}
 
-	public void setLocationList(List<Location> locationList) {
-		this.locationList = locationList;
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
 	}
 
 	public void addLocation(Location location) {
-		if (locationList == null) {
-			locationList = new ArrayList<>();
+		if (locations == null) {
+			locations = new ArrayList<>();
 		}
-		if (!locationList.contains(location)) {
-			locationList.add(location);
+		if (!locations.contains(location)) {
+			locations.add(location);
 			location.setMountainRange(this);
 		}
 	}
 
 	public void removeLocation(Location location) {
-		if (location != null && locationList.contains(location)) {
-			locationList.remove(location);
+		if (location != null && locations.contains(location)) {
+			locations.remove(location);
 			location.setMountainRange(null);
 		}
 	}
@@ -146,15 +148,15 @@ public class MountainRange {
 		} else {
 			builder.append("\nNO PARENT");
 		}
-		if (subRangeList != null && subRangeList.size() > 0) {
-			builder.append("\nsubRangeList.size()=");
-			builder.append(subRangeList.size());
+		if (subranges != null && subranges.size() > 0) {
+			builder.append("\nsubranges.size()=");
+			builder.append(subranges.size());
 		} else {
 			builder.append("\nNO SUB RANGES");
 		}
-		if (locationList != null && locationList.size() > 0) {
-			builder.append("\nlocationList.size()=");
-			builder.append(locationList.size());
+		if (locations != null && locations.size() > 0) {
+			builder.append("\nlocations.size()=");
+			builder.append(locations.size());
 		} else {
 			builder.append("\nNO LOCATIONS");
 		}

@@ -1,9 +1,12 @@
 package com.niceweatherjpa.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,15 +29,15 @@ public class Coordinate {
 	private Double latitude;
 
 	private Double longitude;
-	
+
 	@JsonIgnore
 	@OneToOne
 	@JoinTable(name = "geometry_coordinate", joinColumns = @JoinColumn(name = "coordinate_id"), inverseJoinColumns = @JoinColumn(name = "geometry_id"))
 	private Geometry geometry;
-	
+
 	@JsonIgnore
-	@OneToMany(mappedBy = "coordinate")
-	private List<Location> locationList;
+	@OneToMany(mappedBy = "coordinate", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<Location> locations;
 
 	public Coordinate() {
 		super();
@@ -64,6 +67,21 @@ public class Coordinate {
 		this.longitude = longitude;
 	}
 
+	public List<String> getLocationsShort() {
+		List<String> results = null;
+
+		if (locations != null && locations.size() > 0) {
+			results = new ArrayList<>();
+			for (int i = 0; i < locations.size(); i++) {
+				results.add(locations.get(i).getName() + " id (" + locations.get(i).getId() + ")");
+			}
+			if (results.size() > 1) {
+				results.add("count: " + results.size());
+			}
+		}
+		return results;
+	}
+
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -72,12 +90,29 @@ public class Coordinate {
 		this.geometry = geometry;
 	}
 
-	public List<Location> getLocationList() {
-		return locationList;
+	public List<Location> getLocations() {
+		return locations;
 	}
 
-	public void setLocationList(List<Location> locationList) {
-		this.locationList = locationList;
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
+	}
+
+	public void addLocation(Location location) {
+		if (locations == null) {
+			locations = new ArrayList<>();
+		}
+		if (!locations.contains(location)) {
+			locations.add(location);
+			location.setCoordinate(this);
+		}
+	}
+
+	public void removeLocation(Location location) {
+		if (locations != null && locations.contains(location)) {
+			locations.remove(location);
+			location.setCoordinate(null);
+		}
 	}
 
 	@Override
@@ -112,9 +147,9 @@ public class Coordinate {
 		} else {
 			builder.append("\nNO GEOMETRY");
 		}
-		if (locationList != null && locationList.size() > 0) {
-			builder.append("\nlocationList.size()=");
-			builder.append(locationList.size());
+		if (locations != null && locations.size() > 0) {
+			builder.append("\nlocations.size()=");
+			builder.append(locations.size());
 		} else {
 			builder.append("\nNO LOCATIONS");
 		}
