@@ -48,14 +48,14 @@ class CoordinateTest {
 		assertEquals(-106.445335, coordinate.getLongitude());
 	}
 	
-	@Test
-	void test_Coordinate_Location_mapping() {
-		assertNotNull(coordinate);
-		assertNotNull(coordinate.getLocations());
-		assertTrue(coordinate.getLocations().size() > 0);
-		assertEquals(1, coordinate.getLocations().get(0).getId());
-		assertEquals("Mt. Elbert", coordinate.getLocations().get(0).getName());
-	}
+//	@Test
+//	void test_Coordinate_Location_mapping() {
+//		assertNotNull(coordinate);
+//		assertNotNull(coordinate.getLocations());
+//		assertTrue(coordinate.getLocations().size() > 0);
+//		assertEquals(1, coordinate.getLocations().get(0).getId());
+//		assertEquals("Mt. Elbert", coordinate.getLocations().get(0).getName());
+//	}
 	
 	@Test
 	void test_Coordinate_Geometry_mapping() {

@@ -10,6 +10,6 @@ public interface CategoryService {
 	Category findById(int id);
 	Category create(Category category);
 	Category update(Category category);
-	void delete(Category category);
+	boolean deleteById(int id);
 
 }

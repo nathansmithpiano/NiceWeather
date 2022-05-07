@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,52 +24,100 @@ class CategoryServiceTest {
 	@Autowired
 	private LocationServiceImpl locSvc;
 
-	@Test
-	void test_CategoryService_index() {
+	@BeforeEach
+	void setUp() throws Exception {
 		assertNotNull(catSvc);
+		assertNotNull(locSvc);
+	}
+
+	@AfterEach
+	void tearDown() throws Exception {
+		catSvc = null;
+		locSvc = null;
+	}
+
+	@Test
+	@DisplayName("CategoryService index()")
+	void test_index() {
 		assertNotNull(catSvc.index());
 		assertTrue(catSvc.index().size() > 0);
-		assertEquals(1, catSvc.index().get(0).getId());
 	}
 
 	@Test
-	void test_CategoryService_create_update_delete() {
-		assertNotNull(catSvc);
-		// Create new Category
-		Category newCat = new Category();
-		newCat.setName("Test Name");
-		// Persist in database and return newly created Category
-		Category created = catSvc.create(newCat);
-		newCat = null;
-		assertNotNull(created);
-		assertEquals("Test Name", created.getName());
-		// Update newly created Category and return updated Category
-		created.setName("Updated Name");
-		Category updated = catSvc.update(created);
-		assertNotNull(updated);
-		assertEquals(created.getId(), updated.getId());
-		assertEquals("Updated Name", updated.getName());
-		created = null;
-		// Delete updated Category
-		int oldId = updated.getId();
-		catSvc.delete(updated);
-		assertNull(catSvc.findById(oldId));
+	@DisplayName("CategoryService update()")
+	void test_update() {
+		// Settings
+		final int locId = 1;
+		final String updatedName = "Updated";
+		final int categoryCount = catSvc.index().size();
+		final int locationCount = locSvc.index().size();
+
+		// Find Location
+		Location location = locSvc.findById(locId);
+		assertNotNull(location);
+
+		// Find Category
+		assertNotNull(location.getCategories());
+		assertTrue(location.getCategories().size() > 0);
+		Category category = location.getCategories().get(0);
+		final int catId = category.getId();
+		final String initialName = category.getName();
+
+		// Update locally
+		category.setName(updatedName);
+		// No changes yet
+		assertEquals(initialName, catSvc.findById(catId).getName());
+
+		// Update on DB
+		category = catSvc.update(category);
+		assertNotNull(category);
+		assertEquals(catId, category.getId());
+		assertEquals(updatedName, category.getName());
+		assertEquals(updatedName, catSvc.findById(catId).getName());
+
+		// Revert locally
+		category.setName(initialName);
+		// No changes yet
+		assertEquals(initialName, category.getName());
+
+		// Revert on DB
+		category = catSvc.update(category);
+		assertNotNull(category);
+		assertEquals(catId, category.getId());
+		assertEquals(initialName, category.getName());
+		assertEquals(initialName, catSvc.findById(catId).getName());
+
+		// Verify nothing new created
+		assertEquals(categoryCount, catSvc.index().size());
+		assertEquals(locationCount, locSvc.index().size());
 	}
 
 	@Test
-	void test_CategoryService_update_changes_Location() {
-		assertNotNull(catSvc);
-		Location loc = locSvc.findById(1); // Mt. Elbert
-		assertNotNull(loc.getCategories());
-		assertTrue(loc.getCategories().size() > 0);
-		assertNotNull(loc.getCategories().get(0));
-		Category cat = loc.getCategories().get(0);
-		assertNotNull(cat);
-		cat.setName("Updated Name");
-		Category updatedCat = catSvc.update(cat);
-		assertNotNull(updatedCat);
-		assertEquals("Updated Name", updatedCat.getName());
-		assertEquals("Updated Name", loc.getCategories().get(0).getName());
+	@DisplayName("CategoryService CR_D with Location")
+	void test_CR_D() {
+		// Settings
+		final String newName = "New Category Name";
+		final int categoriesCount = catSvc.index().size();
+		
+		// Create new Category locally
+		Category category = new Category();
+		category.setName(newName);
+		
+		// Persist to DB
+		Category newCategory = catSvc.create(category);
+		final int newId = newCategory.getId();
+		assertNotNull(newCategory);
+		
+		// Verify Category
+		assertEquals(categoriesCount + 1, catSvc.index().size());
+		assertEquals(newName, newCategory.getName());
+		newCategory = catSvc.findById(newId);
+		assertNotNull(newCategory);
+		assertEquals(newName, newCategory.getName());
+		
+		// Delete from DB
+		assertTrue(catSvc.deleteById(newId));
+		assertNull(catSvc.findById(newId));
 	}
 
 }

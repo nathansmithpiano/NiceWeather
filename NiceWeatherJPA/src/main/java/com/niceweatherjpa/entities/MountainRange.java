@@ -26,19 +26,15 @@ public class MountainRange {
 	private int id;
 
 	private String name;
-	
+
 //	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "parent_id")
 	private MountainRange parent;
-	
+
 	@JsonIgnore
-	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	private List<MountainRange> subranges;
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "mountainRange", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	private List<Location> locations;
 
 	public MountainRange() {
 		super();
@@ -65,7 +61,9 @@ public class MountainRange {
 	}
 
 	public void setParent(MountainRange parent) {
-		this.parent = parent;
+		if (parent != this) {
+			this.parent = parent;
+		}
 	}
 
 	public List<MountainRange> getSubranges() {
@@ -82,39 +80,14 @@ public class MountainRange {
 		}
 		if (!subranges.contains(mountainRange)) {
 			subranges.add(mountainRange);
-			mountainRange.setParent(this);
+//			mountainRange.setParent(this);
 		}
 	}
 
 	public void removeSubrange(MountainRange mountainRange) {
 		if (mountainRange != null && subranges.contains(mountainRange)) {
 			subranges.remove(mountainRange);
-			mountainRange.setParent(null);
-		}
-	}
-
-	public List<Location> getLocations() {
-		return locations;
-	}
-
-	public void setLocations(List<Location> locations) {
-		this.locations = locations;
-	}
-
-	public void addLocation(Location location) {
-		if (locations == null) {
-			locations = new ArrayList<>();
-		}
-		if (!locations.contains(location)) {
-			locations.add(location);
-			location.setMountainRange(this);
-		}
-	}
-
-	public void removeLocation(Location location) {
-		if (location != null && locations.contains(location)) {
-			locations.remove(location);
-			location.setMountainRange(null);
+//			mountainRange.setParent(null);
 		}
 	}
 
@@ -153,12 +126,6 @@ public class MountainRange {
 			builder.append(subranges.size());
 		} else {
 			builder.append("\nNO SUB RANGES");
-		}
-		if (locations != null && locations.size() > 0) {
-			builder.append("\nlocations.size()=");
-			builder.append(locations.size());
-		} else {
-			builder.append("\nNO LOCATIONS");
 		}
 		builder.append("\n*** END MountainRange ***");
 		return builder.toString();

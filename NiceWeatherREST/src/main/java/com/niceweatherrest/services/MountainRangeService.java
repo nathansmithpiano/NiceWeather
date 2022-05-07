@@ -9,5 +9,8 @@ public interface MountainRangeService {
 	
 	List<MountainRange> index();
 	MountainRange findById(int id);
+	MountainRange create(MountainRange mountainRange);
+	MountainRange update(MountainRange mountainRange);
+	boolean deleteById(int id);
 
 }

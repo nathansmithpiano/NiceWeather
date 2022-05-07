@@ -17,8 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "location")
 public class Location {
@@ -32,7 +30,7 @@ public class Location {
 	private Coordinate coordinate;
 	
 	@ManyToMany(fetch = FetchType.EAGER, 
-			cascade = CascadeType.ALL)
+			cascade = CascadeType.MERGE)
 	@JoinTable(name = "location_category", 
 	joinColumns = @JoinColumn(name = "location_id"), 
 	inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -83,8 +81,6 @@ public class Location {
 
 	public void setCoordinate(Coordinate coordinate) {
 		this.coordinate = coordinate;
-		System.err.println("made it");
-		coordinate.addLocation(this);
 	}
 
 	public MountainRange getMountainRange() {
@@ -93,7 +89,6 @@ public class Location {
 
 	public void setMountainRange(MountainRange mountainRange) {
 		this.mountainRange = mountainRange;
-		mountainRange.addLocation(this);
 	}
 
 	public List<Category> getCategories() {
@@ -107,24 +102,16 @@ public class Location {
 	public void addCategory(Category category) {
 		if (categories == null) {
 			categories = new ArrayList<>();
-			System.err.println("this shouldn't happen");
 		}
 		if (!categories.contains(category)) {
 			categories.add(category);
-			System.err.println("made it");
 		}
-//		if (!category.getLocationList().contains(this)) {
-//			category.addLocation(this);
-//		}
 	}
 
 	public void removeCategory(Category category) {
 		if (categories != null && categories.contains(category)) {
 			categories.remove(category);
 		}
-//		if (category.getLocationList() != null && category.getLocationList().contains(this)) {
-//			category.removeLocation(this);
-//		}
 	}
 
 	public Point getPoint() {

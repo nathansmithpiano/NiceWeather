@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.niceweatherjpa.entities.Category;
 import com.niceweatherjpa.entities.MountainRange;
 import com.niceweatherrest.repositories.MountainRangeRepository;
 
@@ -27,6 +28,27 @@ public class MountainRangeServiceImpl implements MountainRangeService {
 			return op.get();
 		} else {
 			return null;
+		}
+	}
+
+	@Override
+	public MountainRange create(MountainRange mountainRange) {
+		return mrRepo.saveAndFlush(mountainRange);
+	}
+	
+	@Override
+	public MountainRange update(MountainRange mountainRange) {
+		return mrRepo.save(mountainRange);
+	}
+
+	@Override
+	public boolean deleteById(int id) {
+		mrRepo.deleteById(id);
+		Optional<MountainRange> op = mrRepo.findById(id);
+		if (op.isPresent()) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 

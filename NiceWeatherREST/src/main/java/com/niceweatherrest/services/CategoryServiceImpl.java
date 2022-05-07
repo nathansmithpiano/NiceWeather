@@ -42,15 +42,14 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public void delete(Category category) {
-		
-//		for (Location location : category.getLocationList()) {
-//			if (location.getCategoryList().contains(category)) {
-//				location.removeCategory(category);
-//			}
-//		}
-		
-		catRepo.delete(category);
+	public boolean deleteById(int id) {
+		catRepo.deleteById(id);
+		Optional<Category> op = catRepo.findById(id);
+		if (op.isPresent()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	

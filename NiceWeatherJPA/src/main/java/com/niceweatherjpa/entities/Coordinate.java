@@ -1,18 +1,13 @@
 package com.niceweatherjpa.entities;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -34,10 +29,6 @@ public class Coordinate {
 	@OneToOne
 	@JoinTable(name = "geometry_coordinate", joinColumns = @JoinColumn(name = "coordinate_id"), inverseJoinColumns = @JoinColumn(name = "geometry_id"))
 	private Geometry geometry;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "coordinate", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<Location> locations;
 
 	public Coordinate() {
 		super();
@@ -67,52 +58,12 @@ public class Coordinate {
 		this.longitude = longitude;
 	}
 
-	public List<String> getLocationsShort() {
-		List<String> results = null;
-
-		if (locations != null && locations.size() > 0) {
-			results = new ArrayList<>();
-			for (int i = 0; i < locations.size(); i++) {
-				results.add(locations.get(i).getName() + " id (" + locations.get(i).getId() + ")");
-			}
-			if (results.size() > 1) {
-				results.add("count: " + results.size());
-			}
-		}
-		return results;
-	}
-
 	public Geometry getGeometry() {
 		return geometry;
 	}
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
-	}
-
-	public List<Location> getLocations() {
-		return locations;
-	}
-
-	public void setLocations(List<Location> locations) {
-		this.locations = locations;
-	}
-
-	public void addLocation(Location location) {
-		if (locations == null) {
-			locations = new ArrayList<>();
-		}
-		if (!locations.contains(location)) {
-			locations.add(location);
-			location.setCoordinate(this);
-		}
-	}
-
-	public void removeLocation(Location location) {
-		if (locations != null && locations.contains(location)) {
-			locations.remove(location);
-			location.setCoordinate(null);
-		}
 	}
 
 	@Override
@@ -146,12 +97,6 @@ public class Coordinate {
 			builder.append(geometry.getId());
 		} else {
 			builder.append("\nNO GEOMETRY");
-		}
-		if (locations != null && locations.size() > 0) {
-			builder.append("\nlocations.size()=");
-			builder.append(locations.size());
-		} else {
-			builder.append("\nNO LOCATIONS");
 		}
 		builder.append("\n*** END Coordinate ***");
 		return builder.toString();
