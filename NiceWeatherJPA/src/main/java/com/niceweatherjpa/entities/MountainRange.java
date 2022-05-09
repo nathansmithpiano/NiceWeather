@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -35,6 +37,7 @@ public class MountainRange {
 	private MountainRange parent;
 
 	@OneToMany(mappedBy = "parent")
+	@Cascade(CascadeType.MERGE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<MountainRange> subranges;
 	
@@ -73,6 +76,8 @@ public class MountainRange {
 		if (parent != null && !parent.getSubranges().contains(this)) {
 			parent.addSubrange(this);
 		}
+		
+		
 	}
 	
 	public Integer getParentId() {
@@ -112,9 +117,9 @@ public class MountainRange {
 	public void removeSubrange(MountainRange mountainRange) {
 		if (mountainRange != null && subranges.contains(mountainRange)) {
 			subranges.remove(mountainRange);
-//			if (mountainRange.getParent() != null && mountainRange.getParent().equals(this)) {
+			if (mountainRange.getParent().equals(this)) {
 				mountainRange.setParent(null);
-//			}
+			}
 		}
 	}
 	
