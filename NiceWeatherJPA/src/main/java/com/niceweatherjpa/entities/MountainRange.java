@@ -69,6 +69,10 @@ public class MountainRange {
 
 	public void setParent(MountainRange parent) {
 		this.parent = parent;
+		
+		if (parent != null && !parent.getSubranges().contains(this)) {
+			parent.addSubrange(this);
+		}
 	}
 	
 	public Integer getParentId() {
@@ -108,9 +112,9 @@ public class MountainRange {
 	public void removeSubrange(MountainRange mountainRange) {
 		if (mountainRange != null && subranges.contains(mountainRange)) {
 			subranges.remove(mountainRange);
-			if (mountainRange.getParent() != null && mountainRange.getParent().equals(this)) {
+//			if (mountainRange.getParent() != null && mountainRange.getParent().equals(this)) {
 				mountainRange.setParent(null);
-			}
+//			}
 		}
 	}
 	

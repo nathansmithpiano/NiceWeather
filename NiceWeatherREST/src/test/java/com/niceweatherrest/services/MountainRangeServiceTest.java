@@ -17,6 +17,10 @@ import com.niceweatherjpa.entities.MountainRange;
 @SpringBootTest
 class MountainRangeServiceTest {
 	
+	// Settings
+	final private int rangeId = 2;
+	final private String updatedName = "Updated";
+	
 	@Autowired
 	private MountainRangeServiceImpl mrSvc;
 	
@@ -46,8 +50,6 @@ class MountainRangeServiceTest {
 	@DisplayName("MountainRangeService update()")
 	void test_update() {
 		// Settings
-		final int rangeId = 2;
-		final String updatedName = "Updated";
 		final int rangeCount = mrSvc.index().size();
 		
 		// Find MountainRange
@@ -65,22 +67,24 @@ class MountainRangeServiceTest {
 		assertEquals(initialName, mrSvc.findById(rangeId).getName());
 		
 		// Update on DB
-		range = mrSvc.update(range);
-		assertNotNull(range);
-		assertEquals(rangeId, range.getId());
-		assertEquals(updatedName, range.getName());
+		MountainRange updatedRange = mrSvc.update(range);
+		range = null;
+		assertNotNull(updatedRange);
+		assertEquals(rangeId, updatedRange.getId());
+		assertEquals(updatedName, updatedRange.getName());
 		assertEquals(updatedName, mrSvc.findById(rangeId).getName());
 
 		// Revert locally
-		range.setName(initialName);
+		updatedRange.setName(initialName);
 		// No changes yet
-		assertEquals(initialName, range.getName());
+		assertEquals(initialName, updatedRange.getName());
 
 		// Revert on DB
-		range = mrSvc.update(range);
-		assertNotNull(range);
-		assertEquals(rangeId, range.getId());
-		assertEquals(initialName, range.getName());
+		MountainRange revertedRange = mrSvc.update(updatedRange);
+		range = null;
+		assertNotNull(revertedRange);
+		assertEquals(rangeId, revertedRange.getId());
+		assertEquals(initialName, revertedRange.getName());
 		assertEquals(initialName, mrSvc.findById(rangeId).getName());
 
 		// Verify nothing new created
@@ -88,108 +92,148 @@ class MountainRangeServiceTest {
 	}
 	
 	@Test
-	@DisplayName("MountainRangeService CRUD with self-join")
-	void test_CRUD() {
+	@DisplayName("MountainRangeService create() without subranges")
+	void test_create_without_subranges() {
 		// Settings
 		String newName = "New Name";
-		final int parentId = 1;
-		final int subId1 = 3;
-		final int subId2 = 4;
-		final int numSubs = 2;
-		final int rangeCount = mrSvc.index().size();
+		final int parentId = 2;
 		
-		// Create new MountainRange locally
-		MountainRange range = new MountainRange();
-		range.setName(newName);
+		// Create locally
+		MountainRange newRange = new MountainRange();
+		newRange.setName(newName);
 		
-		// Set parent locally
+		// Find parent and set to newRange
 		MountainRange parent = mrSvc.findById(parentId);
 		assertNotNull(parent);
-		range.setParent(parent);
+		newRange.setParent(parent);
 		
 		// Persist to DB
-		MountainRange newRange = mrSvc.create(range);
-		assertNotNull(newRange);
-		final int newId = newRange.getId();
-		newRange = mrSvc.findById(newId);
+		MountainRange createdRange = mrSvc.create(newRange);
+		newRange = null;
+		assertNotNull(createdRange);
+		final int createdId = createdRange.getId();
+		createdRange = null;
 		
-		// Set subranges locally before updating
-		MountainRange sub1 = mrSvc.findById(subId1);
-		assertNotNull(sub1);
-		final int sub1ParentId = sub1.getParent().getId();
-		sub1.setParent(newRange);
-		newRange.addSubrange(sub1);
-		MountainRange sub2 = mrSvc.findById(subId2);
-		assertNotNull(sub2);
-		final int sub2ParentId = sub2.getParent().getId();
-		sub2.setParent(newRange);
-		newRange.addSubrange(sub2);
-		assertNotNull(newRange.getSubranges());
-		assertEquals(numSubs, newRange.getSubranges().size());
+		// Find new MountainRange in DB
+		MountainRange foundRange = mrSvc.findById(createdId);
+		assertNotNull(foundRange);
+		assertEquals(newName, foundRange.getName());
+		assertEquals(parent, foundRange.getParent());
 		
-		// Update DB
-		MountainRange updatedRange = mrSvc.update(newRange);
-		final int updatedId = updatedRange.getId();
-		assertNotNull(updatedRange);
-		assertEquals(newId, updatedId);
+		// Find parent in DB
+		MountainRange updatedParent = mrSvc.findById(parentId);
+		parent = null;
+		assertNotNull(updatedParent);
 		
-		// Verify new MountainRange
-		assertEquals(rangeCount + 1, mrSvc.index().size());
-		assertNotNull(newRange);
-		assertTrue(newRange.getId() > 0);
-		assertEquals(newName, newRange.getName());
+		// Verify parent is foundRange's parent
+		assertEquals(updatedParent, foundRange.getParent());
 		
-		// Verify parent and subranges
-		assertNotNull(newRange.getParent());
-		assertEquals(parentId, newRange.getParent().getId());
-		assertEquals(parent, newRange.getParent());
-		assertNotNull(newRange.getSubranges());
-		assertEquals(numSubs, newRange.getSubranges().size());
-		assertTrue(newRange.getSubranges().contains(sub1));
-		assertTrue(newRange.getSubranges().contains(sub2));
-		
-		// Revert subranges locally
-		sub1 = mrSvc.findById(subId1);
-		assertNotNull(sub1);
-		assertEquals(updatedId, sub1.getParent().getId());
-		sub2 = mrSvc.findById(subId2);
-		assertNotNull(sub2);
-		assertEquals(updatedId, sub2.getParent().getId());
-		MountainRange sub1Parent = mrSvc.findById(sub1ParentId);
-		assertNotNull(sub1Parent);
-		sub1.setParent(sub1Parent);
-		MountainRange sub2Parent = mrSvc.findById(sub2ParentId);
-		assertNotNull(sub2Parent);
-		sub2.setParent(sub2Parent);
-		
-		// Revert subranges in DB and verify
-		MountainRange updatedSub1 = mrSvc.update(sub1);
-		assertNotNull(updatedSub1);
-		assertEquals(subId1, updatedSub1.getId());
-		updatedSub1 = mrSvc.findById(subId1);
-		assertNotNull(updatedSub1);
-		assertNotNull(updatedSub1.getParent());
-		assertEquals(sub1ParentId, updatedSub1.getParent().getId());
-		MountainRange updatedSub2 = mrSvc.update(sub2);
-		assertNotNull(updatedSub2);
-		assertEquals(subId2, updatedSub2.getId());
-		updatedSub2 = mrSvc.findById(subId2);
-		assertNotNull(updatedSub2);
-		assertNotNull(updatedSub2.getParent());
-		assertEquals(sub2ParentId, updatedSub2.getParent().getId());
-		
-		// Delete range
-		assertTrue(mrSvc.deleteById(updatedId));
-		
-		// Verify
-		assertNull(mrSvc.findById(newId));
-		assertEquals(rangeCount, mrSvc.index().size());
-		sub1 = mrSvc.findById(subId1);
-		assertNotNull(sub1);
-		assertEquals(sub1ParentId, sub1.getParent().getId());
+		// Verify parent has foundRange in its subranges
+		assertTrue(updatedParent.getSubranges().contains(foundRange));
 		
 	}
-
 	
+//	@Test
+//	@DisplayName("MountainRangeService CRUD with self-join")
+//	void test_CRUD() {
+//		// Settings
+//		String newName = "New Name";
+//		final int parentId = 1;
+//		final int subId1 = 3;
+//		final int subId2 = 4;
+//		final int numSubs = 2;
+//		final int rangeCount = mrSvc.index().size();
+//		
+//		// Create new MountainRange locally
+//		MountainRange range = new MountainRange();
+//		range.setName(newName);
+//		
+//		// Set parent locally
+//		MountainRange parent = mrSvc.findById(parentId);
+//		assertNotNull(parent);
+//		range.setParent(parent);
+//		
+//		// Persist to DB
+//		MountainRange newRange = mrSvc.create(range);
+//		assertNotNull(newRange);
+//		final int newId = newRange.getId();
+//		newRange = mrSvc.findById(newId);
+//		
+//		// Set subranges locally before updating
+//		MountainRange sub1 = mrSvc.findById(subId1);
+//		assertNotNull(sub1);
+//		final int sub1ParentId = sub1.getParent().getId();
+//		sub1.setParent(newRange);
+//		newRange.addSubrange(sub1);
+//		MountainRange sub2 = mrSvc.findById(subId2);
+//		assertNotNull(sub2);
+//		final int sub2ParentId = sub2.getParent().getId();
+//		sub2.setParent(newRange);
+//		newRange.addSubrange(sub2);
+//		assertNotNull(newRange.getSubranges());
+//		assertEquals(numSubs, newRange.getSubranges().size());
+//		
+//		// Update DB
+//		MountainRange updatedRange = mrSvc.update(newRange);
+//		final int updatedId = updatedRange.getId();
+//		assertNotNull(updatedRange);
+//		assertEquals(newId, updatedId);
+//		
+//		// Verify new MountainRange
+//		assertEquals(rangeCount + 1, mrSvc.index().size());
+//		assertNotNull(newRange);
+//		assertTrue(newRange.getId() > 0);
+//		assertEquals(newName, newRange.getName());
+//		
+//		// Verify parent and subranges
+//		assertNotNull(newRange.getParent());
+//		assertEquals(parentId, newRange.getParent().getId());
+//		assertEquals(parent, newRange.getParent());
+//		assertNotNull(newRange.getSubranges());
+//		assertEquals(numSubs, newRange.getSubranges().size());
+//		assertTrue(newRange.getSubranges().contains(sub1));
+//		assertTrue(newRange.getSubranges().contains(sub2));
+//		
+//		// Revert subranges locally
+//		sub1 = mrSvc.findById(subId1);
+//		assertNotNull(sub1);
+//		assertEquals(updatedId, sub1.getParent().getId());
+//		sub2 = mrSvc.findById(subId2);
+//		assertNotNull(sub2);
+//		assertEquals(updatedId, sub2.getParent().getId());
+//		MountainRange sub1Parent = mrSvc.findById(sub1ParentId);
+//		assertNotNull(sub1Parent);
+//		sub1.setParent(sub1Parent);
+//		MountainRange sub2Parent = mrSvc.findById(sub2ParentId);
+//		assertNotNull(sub2Parent);
+//		sub2.setParent(sub2Parent);
+//		
+//		// Revert subranges in DB and verify
+//		MountainRange updatedSub1 = mrSvc.update(sub1);
+//		assertNotNull(updatedSub1);
+//		assertEquals(subId1, updatedSub1.getId());
+//		updatedSub1 = mrSvc.findById(subId1);
+//		assertNotNull(updatedSub1);
+//		assertNotNull(updatedSub1.getParent());
+//		assertEquals(sub1ParentId, updatedSub1.getParent().getId());
+//		MountainRange updatedSub2 = mrSvc.update(sub2);
+//		assertNotNull(updatedSub2);
+//		assertEquals(subId2, updatedSub2.getId());
+//		updatedSub2 = mrSvc.findById(subId2);
+//		assertNotNull(updatedSub2);
+//		assertNotNull(updatedSub2.getParent());
+//		assertEquals(sub2ParentId, updatedSub2.getParent().getId());
+//		
+//		// Delete range
+//		assertTrue(mrSvc.deleteById(updatedId));
+//		
+//		// Verify
+//		assertNull(mrSvc.findById(newId));
+//		assertEquals(rangeCount, mrSvc.index().size());
+//		sub1 = mrSvc.findById(subId1);
+//		assertNotNull(sub1);
+//		assertEquals(sub1ParentId, sub1.getParent().getId());
+//		
+//	}
 
 }
