@@ -16,6 +16,7 @@ import com.niceweatherjpa.entities.Category;
 import com.niceweatherjpa.entities.Coordinate;
 import com.niceweatherjpa.entities.Location;
 import com.niceweatherjpa.entities.MountainRange;
+import com.niceweatherjpa.entities.Point;
 
 @SpringBootTest
 class LocationServiceTest {
@@ -31,6 +32,9 @@ class LocationServiceTest {
 
 	@Autowired
 	private CoordinateServiceImpl coordSvc;
+	
+	@Autowired
+	private PointServiceImpl pointSvc;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -38,16 +42,18 @@ class LocationServiceTest {
 		assertNotNull(mrSvc);
 		assertNotNull(catSvc);
 		assertNotNull(coordSvc);
+		assertNotNull(pointSvc);
 	}
-	
+
 	@AfterEach
 	void tearDown() throws Exception {
 		locSvc = null;
 		mrSvc = null;
 		catSvc = null;
 		coordSvc = null;
+		pointSvc = null;
 	}
-	
+
 	@Test
 	@DisplayName("LocationService index()")
 	void test_index() {
@@ -71,7 +77,7 @@ class LocationServiceTest {
 		// Update locally
 		location.setName(updatedName);
 		// No changes yet
-		assertEquals(initialName, locSvc.findById(idInit).getName()); 
+		assertEquals(initialName, locSvc.findById(idInit).getName());
 
 		// Update on DB
 		location = locSvc.update(location);
@@ -83,7 +89,7 @@ class LocationServiceTest {
 		// Revert locally
 		location.setName(initialName);
 		// No changes yet
-		assertEquals(initialName, location.getName()); 
+		assertEquals(initialName, location.getName());
 
 		// Revert on DB
 		location = locSvc.update(location);
@@ -147,7 +153,7 @@ class LocationServiceTest {
 		assertEquals(latitude, newLoc.getCoordinate().getLatitude());
 		assertEquals(longitude, newLoc.getCoordinate().getLongitude());
 		final int coordId = newLoc.getCoordinate().getId();
-		
+
 		// Verify MountainRange
 		assertNotNull(mrSvc.findById(mtnRangeId));
 		assertNotNull(newLoc.getMountainRange());
@@ -162,17 +168,39 @@ class LocationServiceTest {
 		// Delete from DB
 		assertTrue(locSvc.deleteById(newId));
 		assertNull(locSvc.findById(newId));
-		
+
 		// Verify Coordinate deleted
 		assertNull(coordSvc.findById(coordId));
-		
+
 		// Verify MountainRange NOT deleted
 		assertNotNull(mrSvc.findById(mtnRangeId));
-		
+
 		// Verify Categories NOT deleted
 		assertNotNull(catSvc.findById(cat1Id));
 		assertNotNull(catSvc.findById(cat2Id));
 
+	}
+
+	@Test
+	@DisplayName("LocationService Point")
+	void test_point() {
+		// Settings
+		final int locId = 1;
+
+		// Find Location
+		Location location = locSvc.findById(locId);
+		assertNotNull(locId);
+
+		// Get Point for Location
+		Point point = location.getPoint();
+		assertNotNull(point);
+		final int pointId = point.getId();
+		point = null;
+		point = pointSvc.findById(pointId);
+		assertNotNull(point);
+		assertEquals(point, location.getPoint());
+		assertEquals(location, point.getLocation());
+		
 	}
 
 }
