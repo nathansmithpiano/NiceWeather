@@ -11,7 +11,7 @@ import com.niceweatherrest.repositories.LocationRepository;
 
 @Service
 public class LocationServiceImpl implements LocationService {
-	
+
 	@Autowired
 	private LocationRepository locRepo;
 
@@ -43,7 +43,7 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public boolean deleteById(int id) {
 		locRepo.deleteById(id);
-		Optional op = locRepo.findById(id);
+		Optional<Location> op = locRepo.findById(id);
 		if (op.isPresent()) {
 			return false;
 		} else {

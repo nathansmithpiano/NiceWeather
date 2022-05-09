@@ -6,13 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.niceweatherjpa.entities.Category;
 import com.niceweatherjpa.entities.MountainRange;
 import com.niceweatherrest.repositories.MountainRangeRepository;
 
 @Service
 public class MountainRangeServiceImpl implements MountainRangeService {
-	
+
 	@Autowired
 	private MountainRangeRepository mrRepo;
 
@@ -35,7 +34,7 @@ public class MountainRangeServiceImpl implements MountainRangeService {
 	public MountainRange create(MountainRange mountainRange) {
 		return mrRepo.saveAndFlush(mountainRange);
 	}
-	
+
 	@Override
 	public MountainRange update(MountainRange mountainRange) {
 		return mrRepo.save(mountainRange);

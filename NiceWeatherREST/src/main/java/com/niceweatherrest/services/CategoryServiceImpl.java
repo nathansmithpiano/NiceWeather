@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.niceweatherjpa.entities.Category;
-import com.niceweatherjpa.entities.Location;
 import com.niceweatherrest.repositories.CategoryRepository;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-	
+
 	@Autowired
 	private CategoryRepository catRepo;
 
@@ -20,7 +19,7 @@ public class CategoryServiceImpl implements CategoryService {
 	public List<Category> index() {
 		return catRepo.findAll();
 	}
-	
+
 	@Override
 	public Category findById(int id) {
 		Optional<Category> op = catRepo.findById(id);
@@ -51,7 +50,5 @@ public class CategoryServiceImpl implements CategoryService {
 			return true;
 		}
 	}
-
-	
 
 }

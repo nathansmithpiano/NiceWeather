@@ -11,7 +11,7 @@ import com.niceweatherrest.repositories.CoordinateRepository;
 
 @Service
 public class CoordinateServiceImpl implements CoordinateService {
-	
+
 	@Autowired
 	private CoordinateRepository coordRepo;
 
@@ -27,6 +27,27 @@ public class CoordinateServiceImpl implements CoordinateService {
 			return op.get();
 		} else {
 			return null;
+		}
+	}
+
+	@Override
+	public Coordinate create(Coordinate coordinate) {
+		return coordRepo.saveAndFlush(coordinate);
+	}
+
+	@Override
+	public Coordinate update(Coordinate coordinate) {
+		return coordRepo.save(coordinate);
+	}
+
+	@Override
+	public boolean deleteById(int id) {
+		coordRepo.deleteById(id);
+		Optional<Coordinate> op = coordRepo.findById(id);
+		if (op.isPresent()) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 
