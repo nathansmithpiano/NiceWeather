@@ -1,12 +1,22 @@
 package com.niceweatherjpa.entities;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "category")
@@ -15,9 +25,15 @@ public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
 	private String name;
-
+	
+	@JsonIgnore
+	@ManyToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "location_id"))
+	private Set<Location> locations;
+	
 	public Category() {
 		super();
 	}
@@ -36,6 +52,43 @@ public class Category {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getLocationCount() {
+		// if Category has locations
+		if (locations != null) {
+			// show number of locations
+			return locations.size() + " locations";
+		} else {
+			return "NO LOCATIONS";
+		}
+	}
+	
+	public Set<Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(Set<Location> locations) {
+		this.locations = locations;
+	}
+	
+	public void addLocation(Location location) {
+		if (locations == null) {
+			locations = new LinkedHashSet<>();
+		}
+		if (!locations.contains(location)) {
+			locations.add(location);
+			location.addCategory(this);
+		}
+	}
+
+	public void removeLocation(Location location) {
+		if (locations != null && locations.contains(location)) {
+			locations.remove(location);
+			if (location.getCategories() != null  && location.getCategories().contains(this)) {
+				location.removeCategory(this);
+			}
+		}
 	}
 
 	@Override
@@ -62,6 +115,16 @@ public class Category {
 		builder.append(id);
 		builder.append("\nname=");
 		builder.append(name);
+		
+		// if Category has locations
+		if (locations != null & locations.size() > 0) {
+			// print number of locations
+			builder.append("\nLocations: ");
+			builder.append(locations.size());
+		} else {
+			builder.append("\nNO LOCATIONS");
+		}
+		
 		builder.append("\n*** END Category ***");
 		return builder.toString();
 	}

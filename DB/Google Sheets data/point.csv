@@ -1,0 +1,2 @@
+id,location_id,geometry_id,relative_location_id,id_url,type,properties_id,properties_type,cwa,grid_id,grid_x,grid_y,time_zone,radar_station
+1,1,,1,"https://api.weather.gov/points/39.1177,-106.4453",Feature,"https://api.weather.gov/points/39.1177,-106.4453",wx:Point,PUB,PUB,33,107,America/Denver,KGJX

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class CategoryTest {
@@ -33,7 +34,9 @@ class CategoryTest {
 	@BeforeEach
 	void setUp() {
 		em = emf.createEntityManager();
-		category = em.find(Category.class, 1);
+		category = em.find(Category.class, 3);
+		assertNotNull(category);
+		assertEquals(3, category.getId());
 	}
 	
 	@AfterEach
@@ -43,10 +46,17 @@ class CategoryTest {
 	}
 
 	@Test
+	@DisplayName("Category mapping")
 	void test_Category_mapping() {
-		assertNotNull(category);
-		assertEquals(1, category.getId());
-		assertEquals("Peak", category.getName());
+		assertEquals("Colorado 14er", category.getName());
+	}
+	
+	@Test
+	@DisplayName("Category Location mapping")
+	void test_Category_Location_mapping() {
+		assertNotNull(category.getLocations());
+		assertTrue(category.getLocations().size() > 0);
+		assertEquals(59, category.getLocations().size());
 	}
 	
 //	@Test

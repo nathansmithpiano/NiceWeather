@@ -18,6 +18,13 @@ class CoordinateTest {
 	private static EntityManager em;
 	private Coordinate coordinate;
 	
+	// Settings
+	private final int coordinateId = 1;
+	private final double latitude = 39.11771;
+	private final double longitude = -106.445335;
+	private final int coordinateGeometryId = 1;
+	private final String coordinateGeometryType = "Point";
+	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		emf = Persistence.createEntityManagerFactory("NiceWeatherJPA");
@@ -43,9 +50,9 @@ class CoordinateTest {
 	@Test
 	void test_Coordinate_mapping() {
 		assertNotNull(coordinate);
-		assertEquals(1, coordinate.getId());
-		assertEquals(39.11771, coordinate.getLatitude());
-		assertEquals(-106.445335, coordinate.getLongitude());
+		assertEquals(coordinateId, coordinate.getId());
+		assertEquals(latitude, coordinate.getLatitude());
+		assertEquals(longitude, coordinate.getLongitude());
 	}
 	
 //	@Test
@@ -60,11 +67,11 @@ class CoordinateTest {
 	@Test
 	void test_Coordinate_Geometry_mapping() {
 		assertNotNull(coordinate);
-		assertNull(coordinate.getGeometry());
-		coordinate = em.find(Coordinate.class, 2);
 		assertNotNull(coordinate.getGeometry());
-		assertEquals(1, coordinate.getGeometry().getId());
-		assertEquals("Point", coordinate.getGeometry().getType());
+		coordinate = em.find(Coordinate.class, coordinateId);
+		assertNotNull(coordinate.getGeometry());
+		assertEquals(coordinateGeometryId, coordinate.getGeometry().getId());
+		assertEquals(coordinateGeometryType, coordinate.getGeometry().getType());
 	}
 
 }

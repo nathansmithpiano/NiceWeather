@@ -6,13 +6,9 @@ import javax.persistence.Persistence;
 
 import com.niceweatherjpa.entities.Category;
 import com.niceweatherjpa.entities.Coordinate;
-import com.niceweatherjpa.entities.Forecast;
 import com.niceweatherjpa.entities.Geometry;
 import com.niceweatherjpa.entities.Location;
 import com.niceweatherjpa.entities.MountainRange;
-import com.niceweatherjpa.entities.Period;
-import com.niceweatherjpa.entities.Point;
-import com.niceweatherjpa.entities.RelativeLocation;
 
 public class TestClientJPA {
 
@@ -43,24 +39,24 @@ public class TestClientJPA {
 	}
 	
 	private void printAllToStrings() {
-		Category category = em.find(Category.class, 1);
-		System.out.println(category);
-		Coordinate coordinate = em.find(Coordinate.class, 1);
-		System.out.println(coordinate);
-		Forecast forecast = em.find(Forecast.class, 1);
-		System.out.println(forecast);
-		Geometry geometry = em.find(Geometry.class, 1);
-		System.out.println(geometry);
-		Location location = em.find(Location.class, 1);
-		System.out.println(location);
+//		Category category = em.find(Category.class, 1);
+//		System.out.println(category);
+//		Coordinate coordinate = em.find(Coordinate.class, 1);
+//		System.out.println(coordinate);
+//		Forecast forecast = em.find(Forecast.class, 1);
+//		System.out.println(forecast);
+//		Geometry geometry = em.find(Geometry.class, 1);
+//		System.out.println(geometry);
+//		Location location = em.find(Location.class, 1);
+//		System.out.println(location);
 		MountainRange mountainRange = em.find(MountainRange.class, 1);
 		System.out.println(mountainRange);
-		Period period = em.find(Period.class, 1);
-		System.out.println(period);
-		Point point = em.find(Point.class, 1);
-		System.out.println(point);
-		RelativeLocation relativeLocation = em.find(RelativeLocation.class, 1);
-		System.out.println(relativeLocation);
+//		Period period = em.find(Period.class, 1);
+//		System.out.println(period);
+//		Point point = em.find(Point.class, 1);
+//		System.out.println(point);
+//		RelativeLocation relativeLocation = em.find(RelativeLocation.class, 1);
+//		System.out.println(relativeLocation);
 	}
 
 }

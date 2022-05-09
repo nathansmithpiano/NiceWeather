@@ -7,8 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,8 +25,8 @@ public class Coordinate {
 	private Double longitude;
 
 	@JsonIgnore
-	@OneToOne
-	@JoinTable(name = "geometry_coordinate", joinColumns = @JoinColumn(name = "coordinate_id"), inverseJoinColumns = @JoinColumn(name = "geometry_id"))
+	@ManyToOne
+	@JoinColumn(name = "geometry_id")
 	private Geometry geometry;
 
 	public Coordinate() {
@@ -65,6 +64,14 @@ public class Coordinate {
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 	}
+	
+	public Integer getGeometryId() {
+		if (geometry != null) {
+			return geometry.getId();
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public int hashCode() {
@@ -93,7 +100,7 @@ public class Coordinate {
 		builder.append("\nlongitude=");
 		builder.append(longitude);
 		if (geometry != null) {
-			builder.append("\ngeometry.getId()=");
+			builder.append("\nGeometry ID: ");
 			builder.append(geometry.getId());
 		} else {
 			builder.append("\nNO GEOMETRY");

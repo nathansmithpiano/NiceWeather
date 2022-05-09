@@ -1,12 +1,11 @@
 package com.niceweatherjpa.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 @Entity
 @Table(name = "location")
 public class Location {
@@ -24,28 +26,26 @@ public class Location {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "coordinate_id")
-	private Coordinate coordinate;
-	
-	@ManyToMany(fetch = FetchType.EAGER, 
-			cascade = CascadeType.MERGE)
-	@JoinTable(name = "location_category", 
-	joinColumns = @JoinColumn(name = "location_id"), 
-	inverseJoinColumns = @JoinColumn(name = "category_id"))
-	private List<Category> categories;
-	
-	@ManyToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "mountain_range_id")
-	private MountainRange mountainRange;
-
-	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
-	private Point point;
 	
 	private String name;
-	
+
 	private Double elevation;
+
+	@OneToOne
+	@JoinColumn(name = "geometry_id")
+	private Geometry geometry;
+	
+	@ManyToOne
+	@JoinColumn(name = "mountain_range_id")
+	private MountainRange mountainRange;
+	
+	@ManyToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "location_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+	private Set<Category> categories;
+
+//	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
+//	private Point point;
 
 	public Location() {
 		super();
@@ -66,7 +66,7 @@ public class Location {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public Double getElevation() {
 		return elevation;
 	}
@@ -74,15 +74,15 @@ public class Location {
 	public void setElevation(Double elevation) {
 		this.elevation = elevation;
 	}
-
-	public Coordinate getCoordinate() {
-		return coordinate;
+	
+	public Geometry getGeometry() {
+		return geometry;
 	}
 
-	public void setCoordinate(Coordinate coordinate) {
-		this.coordinate = coordinate;
+	public void setGeometry(Geometry geometry) {
+		this.geometry = geometry;
 	}
-
+	
 	public MountainRange getMountainRange() {
 		return mountainRange;
 	}
@@ -90,37 +90,41 @@ public class Location {
 	public void setMountainRange(MountainRange mountainRange) {
 		this.mountainRange = mountainRange;
 	}
-
-	public List<Category> getCategories() {
+	
+	public Set<Category> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<Category> categories) {
+	public void setCategories(Set<Category> categories) {
 		this.categories = categories;
 	}
 
 	public void addCategory(Category category) {
 		if (categories == null) {
-			categories = new ArrayList<>();
+			categories = new LinkedHashSet<>();
 		}
 		if (!categories.contains(category)) {
 			categories.add(category);
+			category.addLocation(this);
 		}
 	}
 
 	public void removeCategory(Category category) {
 		if (categories != null && categories.contains(category)) {
 			categories.remove(category);
+			if (category.getLocations() != null && category.getLocations().contains(this)) {
+				category.removeLocation(this);
+			}
 		}
 	}
 
-	public Point getPoint() {
-		return point;
-	}
-
-	public void setPoint(Point point) {
-		this.point = point;
-	}
+//	public Point getPoint() {
+//		return point;
+//	}
+//
+//	public void setPoint(Point point) {
+//		this.point = point;
+//	}
 
 	@Override
 	public int hashCode() {
@@ -148,32 +152,61 @@ public class Location {
 		builder.append(name);
 		builder.append("\nelevation=");
 		builder.append(elevation);
-		if (coordinate != null) {
-			builder.append("\ncoordinate.getLatitude()=");
-			builder.append(coordinate.getLatitude());
-			builder.append("\ncoordinate.getLongitude()=");
-			builder.append(coordinate.getLongitude());
+		
+		// if Location has Geometry
+		if (geometry != null) {
+			builder.append("\nGeometry: ");
+			
+			// if Geometry has only 1 Coordinate (should only have 1)
+			if (geometry.getCoordinates() != null && geometry.getCoordinates().size() == 1) {
+				// Get first coordinate in Geometry
+				Coordinate coordinate = geometry.getCoordinates().iterator().next();
+				
+				// print id, latitude, and longitude of Coordinate
+				builder.append(" Coordinate (id: " + coordinate.getId());
+				builder.append(", latitude: " + coordinate.getLatitude());
+				builder.append(", longitude: " + coordinate.getLongitude() + ")");
+			} else {
+				builder.append(" INVALID COORDINATE, ERROR");
+			}
+			
 		} else {
-			builder.append("\nNO POINT");
+			builder.append("\nNO GEOMETRY");
 		}
-		if (categories != null && categories.size() > 0) {
-			builder.append("\ncategories.size()=");
-			builder.append(categories.size());
-		} else {
-			builder.append("\nNO CATEGORIES");
-		}
+		
+		// if Location has MountainRange
 		if (mountainRange != null) {
-			builder.append("\nmountainRange.getId()=");
-			builder.append(mountainRange.getId());
+			// print name and id of MountainRange
+			builder.append("\nMountainRange: " + mountainRange.getName());
+			builder.append(" (id: " + mountainRange.getId() + ")");
 		} else {
 			builder.append("\nNO MOUNTAIN RANGE");
 		}
-		if (point != null) {
-			builder.append("\npoint.getId()=");
-			builder.append(point.getId());
+		
+		// if Location has categories
+		if (categories != null && categories.size() > 0) {
+			// print name and id of each Category
+			Iterator<Category> it = categories.iterator();
+			int count = 0;
+			
+			while (it.hasNext()) {
+				Category category = it.next();
+				count++;
+				
+				builder.append("\nCategory " + count + ": ");
+				builder.append(category.getName());
+				builder.append(" (id: " + category.getId() + ")");
+			}
 		} else {
-			builder.append("\nNO POINT");
+			builder.append("\nNO CATEGORIES");
 		}
+		
+//		if (point != null) {
+//			builder.append("\npoint.getId()=");
+//			builder.append(point.getId());
+//		} else {
+//			builder.append("\nNO POINT");
+//		}
 		builder.append("\n*** END Location ***");
 		return builder.toString();
 	}

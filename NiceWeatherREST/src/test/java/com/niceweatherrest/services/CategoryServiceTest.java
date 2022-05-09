@@ -59,7 +59,7 @@ class CategoryServiceTest {
 		// Find Category
 		assertNotNull(location.getCategories());
 		assertTrue(location.getCategories().size() > 0);
-		Category category = location.getCategories().get(0);
+		Category category = location.getCategories().iterator().next();
 		final int catId = category.getId();
 		final String initialName = category.getName();
 

@@ -5,11 +5,11 @@
 	<class>com.niceweatherjpa.entities.MountainRange</class>
 	<class>com.niceweatherjpa.entities.Category</class>
 	<class>com.niceweatherjpa.entities.Location</class>
-	<class>com.niceweatherjpa.entities.Point</class>
+	<!-- <class>com.niceweatherjpa.entities.Point</class>
 	<class>com.niceweatherjpa.entities.Forecast</class>
 	<class>com.niceweatherjpa.entities.Period</class>
+	<class>com.niceweatherjpa.entities.RelativeLocation</class>-->
 	<class>com.niceweatherjpa.entities.Geometry</class>
-	<class>com.niceweatherjpa.entities.RelativeLocation</class>
 	<class>com.niceweatherjpa.entities.Coordinate</class>
 	
 	<properties>

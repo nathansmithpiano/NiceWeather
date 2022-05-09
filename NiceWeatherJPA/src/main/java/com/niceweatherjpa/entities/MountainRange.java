@@ -1,12 +1,11 @@
 package com.niceweatherjpa.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -27,14 +29,19 @@ public class MountainRange {
 
 	private String name;
 
-//	@JsonIgnore
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "parent_id")
 	private MountainRange parent;
 
+	@OneToMany(mappedBy = "parent")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Set<MountainRange> subranges;
+	
 	@JsonIgnore
-	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	private List<MountainRange> subranges;
+	@OneToMany(mappedBy = "mountainRange")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Set<Location> locations;
 
 	public MountainRange() {
 		super();
@@ -61,33 +68,84 @@ public class MountainRange {
 	}
 
 	public void setParent(MountainRange parent) {
-		if (parent != this) {
-			this.parent = parent;
+		this.parent = parent;
+	}
+	
+	public Integer getParentId() {
+		if (parent != null) {
+			return parent.getId();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getParentName() {
+		if (parent != null) {
+			return parent.getName();
+		} else {
+			return "NO PARENT";
 		}
 	}
 
-	public List<MountainRange> getSubranges() {
+	public Set<MountainRange> getSubranges() {
 		return subranges;
 	}
 
-	public void setSubranges(List<MountainRange> subranges) {
+	public void setSubranges(Set<MountainRange> subranges) {
 		this.subranges = subranges;
 	}
 
 	public void addSubrange(MountainRange mountainRange) {
 		if (subranges == null) {
-			subranges = new ArrayList<>();
+			subranges = new LinkedHashSet<>();
 		}
 		if (!subranges.contains(mountainRange)) {
 			subranges.add(mountainRange);
-//			mountainRange.setParent(this);
+			mountainRange.setParent(this);
 		}
 	}
 
 	public void removeSubrange(MountainRange mountainRange) {
 		if (mountainRange != null && subranges.contains(mountainRange)) {
 			subranges.remove(mountainRange);
-//			mountainRange.setParent(null);
+			if (mountainRange.getParent() != null && mountainRange.getParent().equals(this)) {
+				mountainRange.setParent(null);
+			}
+		}
+	}
+	
+	public Integer getLocationCount() {
+		if (locations != null && locations.size() > 0) {
+			return locations.size();
+		} else {
+			return null;
+		}
+	}
+	
+	public Set<Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(Set<Location> locations) {
+		this.locations = locations;
+	}
+	
+	public void addLocation(Location location) {
+		if (locations == null) {
+			locations = new LinkedHashSet<>();
+		}
+		if (!locations.contains(location)) {
+			locations.add(location);
+			location.setMountainRange(this);
+		}
+	}
+	
+	public void removeLocation(Location location) {
+		if (location != null && locations.contains(location)) {
+			locations.remove(location);
+			if (location.getMountainRange() != null && location.getMountainRange().equals(this)) {
+				location.setMountainRange(null);
+			}
 		}
 	}
 
@@ -115,18 +173,35 @@ public class MountainRange {
 		builder.append(id);
 		builder.append("\nname=");
 		builder.append(name);
+		
+		// if MountainRange has parent
 		if (parent != null) {
-			builder.append("\nparent.getId()=");
-			builder.append(parent.getId());
+			// print name and id of parent
+			builder.append("\nParent: ");
+			builder.append(parent.getName());
+			builder.append(" (id: " + parent.getId() + ")");
 		} else {
 			builder.append("\nNO PARENT");
 		}
+		
+		// if MountainRange has subranges
 		if (subranges != null && subranges.size() > 0) {
-			builder.append("\nsubranges.size()=");
-			builder.append(subranges.size());
+			// print name and id for each subrange
+			Iterator<MountainRange> it = subranges.iterator();
+			int count = 0;
+			
+			while (it.hasNext()) {
+				MountainRange subrange = it.next();
+				count++;
+				
+				builder.append("\nSubrange " + count + ": ");
+				builder.append(subrange.getName());
+				builder.append(" (id: " + subrange.getId() + ")");
+			}
 		} else {
 			builder.append("\nNO SUB RANGES");
 		}
+		
 		builder.append("\n*** END MountainRange ***");
 		return builder.toString();
 	}
