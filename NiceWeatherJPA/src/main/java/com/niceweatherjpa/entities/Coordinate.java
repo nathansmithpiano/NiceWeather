@@ -10,9 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -66,12 +63,12 @@ public class Coordinate {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
-		
+
 		if (geometry != null && !geometry.getCoordinates().contains(this)) {
 			geometry.addCoordinate(this);
 		}
 	}
-	
+
 	public Integer getGeometryId() {
 		if (geometry != null) {
 			return geometry.getId();

@@ -27,16 +27,16 @@ public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String name;
-	
+
 	@JsonIgnore
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "location_id"))
 	@Cascade(CascadeType.MERGE)
 	private Set<Location> locations;
-	
+
 	public Category() {
 		super();
 	}
@@ -56,7 +56,7 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getLocationCount() {
 		// if Category has locations
 		if (locations != null) {
@@ -66,7 +66,7 @@ public class Category {
 			return "NO LOCATIONS";
 		}
 	}
-	
+
 	public Set<Location> getLocations() {
 		return locations;
 	}
@@ -74,7 +74,7 @@ public class Category {
 	public void setLocations(Set<Location> locations) {
 		this.locations = locations;
 	}
-	
+
 	public void addLocation(Location location) {
 		if (locations == null) {
 			locations = new LinkedHashSet<>();
@@ -88,7 +88,7 @@ public class Category {
 	public void removeLocation(Location location) {
 		if (locations != null && locations.contains(location)) {
 			locations.remove(location);
-			if (location.getCategories() != null  && location.getCategories().contains(this)) {
+			if (location.getCategories() != null && location.getCategories().contains(this)) {
 				location.removeCategory(this);
 			}
 		}
@@ -118,7 +118,7 @@ public class Category {
 		builder.append(id);
 		builder.append("\nname=");
 		builder.append(name);
-		
+
 		// if Category has locations
 		if (locations != null & locations.size() > 0) {
 			// print number of locations
@@ -127,7 +127,7 @@ public class Category {
 		} else {
 			builder.append("\nNO LOCATIONS");
 		}
-		
+
 		builder.append("\n*** END Category ***");
 		return builder.toString();
 	}

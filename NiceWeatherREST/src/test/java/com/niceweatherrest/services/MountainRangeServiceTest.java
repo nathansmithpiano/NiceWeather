@@ -164,32 +164,32 @@ class MountainRangeServiceTest {
 	@DisplayName("MountainRangeService update with subrange changes")
 	void test_update_with_subranges() {
 		// Change subranges, parents, and revert
-		
+
 		// Settings
 		final int rangeId = 3; // "Front"
 		final int rangeSubrangeCount = 0; // has no subranges initially
 		final int numSubrangesToAdd = 4;
 		final int numRanges = mrSvc.index().size();
-		
+
 		// Find range in DB
 		MountainRange range = mrSvc.findById(rangeId);
 		assertNotNull(range);
 		assertEquals(rangeSubrangeCount, range.getSubranges().size());
-		
+
 		// Get parent
 		MountainRange parent = range.getParent();
 		assertNotNull(parent);
 		final int parentId = parent.getId();
 		parent = null;
-		
+
 		// Find parent in DB
 		parent = mrSvc.findById(parentId);
 		assertNotNull(parent);
-		
+
 		// Verify parent range connections
 		assertTrue(parent.getSubranges().contains(range));
 		assertEquals(parent, range.getParent());
-		
+
 		// Find other ranges in DB
 		MountainRange range5 = mrSvc.findById(5);
 		assertNotNull(range5);
@@ -199,7 +199,7 @@ class MountainRangeServiceTest {
 		assertNotNull(range7);
 		MountainRange range8 = mrSvc.findById(8);
 		assertNotNull(range8);
-		
+
 		// Verify other ranges' parent is not range initially
 		MountainRange range5Parent = range5.getParent();
 		assertNotNull(range5Parent);
@@ -213,13 +213,13 @@ class MountainRangeServiceTest {
 		MountainRange range8Parent = range8.getParent();
 		assertNotNull(range8Parent);
 		assertNotEquals(range, range8Parent);
-		
+
 		// Add other ranges to range's subranges
 		range.addSubrange(range5);
 		range.addSubrange(range6);
 		range.addSubrange(range7);
 		range.addSubrange(range8);
-		
+
 		// Verify locally
 		assertTrue(range.getSubranges().contains(range5));
 		assertEquals(range, range5.getParent());
@@ -229,12 +229,12 @@ class MountainRangeServiceTest {
 		assertEquals(range, range7.getParent());
 		assertTrue(range.getSubranges().contains(range8));
 		assertEquals(range, range8.getParent());
-		
+
 		// Update on DB
 		MountainRange updatedRange = mrSvc.update(range);
 		range = null;
 		assertNotNull(updatedRange);
-		
+
 		// Verify range has subranges
 		assertNotNull(updatedRange.getSubranges());
 		assertEquals(numSubrangesToAdd, updatedRange.getSubranges().size());
@@ -242,7 +242,7 @@ class MountainRangeServiceTest {
 		assertTrue(updatedRange.getSubranges().contains(range6));
 		assertTrue(updatedRange.getSubranges().contains(range7));
 		assertTrue(updatedRange.getSubranges().contains(range8));
-		
+
 		// Find other ranges in DB
 		MountainRange updatedRange5 = mrSvc.findById(5);
 		assertNotNull(updatedRange5);
@@ -252,50 +252,51 @@ class MountainRangeServiceTest {
 		assertNotNull(updatedRange7);
 		MountainRange updatedRange8 = mrSvc.findById(8);
 		assertNotNull(updatedRange8);
-		
+
 		// Verify other ranges' parent is updatedRange
 		assertEquals(updatedRange, updatedRange5.getParent());
 		assertEquals(updatedRange, updatedRange6.getParent());
 		assertEquals(updatedRange, updatedRange7.getParent());
 		assertEquals(updatedRange, updatedRange8.getParent());
-		
+
 		// NOTE: updated list with @Cascade(CascadeType.MERGE) to make above this work
-		
+
 		// Revert range5's parent
 		assertNotEquals(updatedRange, range5Parent);
 		range5.setParent(range5Parent);
-		
+
 		// Remove range5 from updatedRange's subranges
 		updatedRange.removeSubrange(range5);
-		
-		// NOTE: must remove and persist from both places.  If not in list, no way to update/merge/etc
-		
+
+		// NOTE: must remove and persist from both places. If not in list, no way to
+		// update/merge/etc
+
 		// Verify locally
 		assertFalse(updatedRange.getSubranges().contains(range5));
 		assertEquals(numSubrangesToAdd - 1, updatedRange.getSubranges().size());
-		
+
 		// Update range5 on DB
 		MountainRange updatedRange52 = mrSvc.update(range5);
 		assertNotNull(updatedRange52);
 		range5 = null;
-		
+
 		// Update updatedRange on DB
 		MountainRange updatedRange2 = mrSvc.update(updatedRange);
 		assertNotNull(updatedRange2);
 		updatedRange = null;
-		
+
 		// Verify changes to range5
 		assertNotEquals(updatedRange, updatedRange52.getParent());
 		assertNotEquals(range, updatedRange52.getParent());
 		assertEquals(range5Parent, updatedRange52.getParent());
-		
+
 		// Verify changes to updatedRange2
 		assertFalse(updatedRange2.getSubranges().contains(range5));
 		assertTrue(updatedRange2.getSubranges().contains(range6));
 		assertTrue(updatedRange2.getSubranges().contains(range7));
 		assertTrue(updatedRange2.getSubranges().contains(range8));
 		assertEquals(numSubrangesToAdd - 1, updatedRange2.getSubranges().size());
-		
+
 		// Find other ranges in DB
 		MountainRange updatedRange62 = mrSvc.findById(6);
 		assertNotNull(updatedRange62);
@@ -306,28 +307,28 @@ class MountainRangeServiceTest {
 		MountainRange updatedRange82 = mrSvc.findById(8);
 		assertNotNull(updatedRange82);
 		updatedRange8 = null;
-		
+
 		// Verify no changes to other ranges
 		assertEquals(updatedRange2, updatedRange62.getParent());
 		assertEquals(updatedRange2, updatedRange72.getParent());
 		assertEquals(updatedRange2, updatedRange82.getParent());
-		
+
 		// revert other ranges' parents
 		updatedRange62.setParent(range6Parent);
 		updatedRange72.setParent(range7Parent);
 		updatedRange82.setParent(range8Parent);
-		
+
 		// Remove other ranges' from updatedRange's subranges
 		updatedRange2.removeSubrange(range6);
 		updatedRange2.removeSubrange(range7);
 		updatedRange2.removeSubrange(range8);
-		
+
 		// Verify locally
 		assertEquals(rangeSubrangeCount, updatedRange2.getSubranges().size());
 		assertNotEquals(updatedRange2, range6.getParent());
 		assertNotEquals(updatedRange2, range7.getParent());
 		assertNotEquals(updatedRange2, range8.getParent());
-		
+
 		// Update other ranges' on DB
 		MountainRange revertedRange6 = mrSvc.update(updatedRange62);
 		assertNotNull(revertedRange6);
@@ -338,28 +339,28 @@ class MountainRangeServiceTest {
 		MountainRange revertedRange8 = mrSvc.update(updatedRange82);
 		assertNotNull(revertedRange8);
 		updatedRange82 = null;
-		
+
 		// Update updatedRange2 on DB
 		MountainRange revertedRange = mrSvc.update(updatedRange2);
 		assertNotNull(revertedRange);
 		updatedRange2 = null;
-		
+
 		// Verify changes to other ranges'
 		assertEquals(range6Parent, revertedRange6.getParent());
 		assertEquals(range7Parent, revertedRange7.getParent());
 		assertEquals(range8Parent, revertedRange8.getParent());
-		
+
 		// Verify changes on revertedRange
 		assertNotNull(revertedRange.getSubranges());
 		assertEquals(rangeSubrangeCount, revertedRange.getSubranges().size());
 		assertFalse(revertedRange.getSubranges().contains(revertedRange6));
 		assertFalse(revertedRange.getSubranges().contains(revertedRange7));
 		assertFalse(revertedRange.getSubranges().contains(revertedRange8));
-		
+
 		// Verify nothing added or removed
 		assertEquals(numRanges, mrSvc.index().size());
 	}
-	
+
 //	@Test
 //	@DisplayName("MountainRangeService delete and restore with self-mappings")
 //	void test_delete_self_mappings() {

@@ -33,10 +33,10 @@ class LocationServiceTest {
 
 	@Autowired
 	private CoordinateServiceImpl coordSvc;
-	
+
 	@Autowired
 	private GeometryServiceImpl geoSvc;
-	
+
 //	@Autowired
 //	private PointServiceImpl pointSvc;
 
@@ -71,7 +71,7 @@ class LocationServiceTest {
 	@DisplayName("LocationService update()")
 	void test_update() {
 		// Change and revert name
-		
+
 		// Settings
 		final int idInit = 1;
 		final String updatedName = "Updated";
@@ -113,8 +113,10 @@ class LocationServiceTest {
 	@Test
 	@DisplayName("LocationService CR_D with Coordinate, Category, MountainRange")
 	void test_CR_D() {
-		// 
-		
+		// Create location with new Geometry, new Coordinate, existing MountainRange, 2
+		// existing Categories
+		// Remove new entities from DB
+
 		// Settings
 		String newName = "New Name";
 		final double latitude = 12.34;
@@ -137,16 +139,16 @@ class LocationServiceTest {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setLatitude(latitude);
 		coordinate.setLongitude(longitude);
-		
+
 		// Create new Geometry locally (non-null)
 		Geometry geometry = new Geometry();
 		geometry.setType(geometryType);
 		geometry.addCoordinate(coordinate);
-		
+
 		// Verify Coordinate and Geometry locally
 		assertEquals(geometry, coordinate.getGeometry());
 		assertTrue(geometry.getCoordinates().contains(coordinate));
-		
+
 		// Set to loc
 		loc.setGeometry(geometry);
 
@@ -179,7 +181,7 @@ class LocationServiceTest {
 		final int newGeometryId = newLoc.getGeometry().getId();
 		Geometry newGeometry = geoSvc.findById(newGeometryId);
 		assertNotNull(newGeometry);
-		
+
 		// Get new Coordinate from DB
 		assertNotNull(newGeometry.getCoordinates());
 		assertTrue(newGeometry.getCoordinates().size() > 0);
@@ -187,13 +189,13 @@ class LocationServiceTest {
 		final int newCoordinateId = newGeometry.getCoordinates().iterator().next().getId();
 		Coordinate newCoordinate = coordSvc.findById(newCoordinateId);
 		assertNotNull(newCoordinate);
-		
+
 		// Verify Geometry and Coordinate
 		assertEquals(newGeometry, newCoordinate.getGeometry());
 		assertTrue(newGeometry.getCoordinates().contains(newCoordinate));
 		assertEquals(latitude, newCoordinate.getLatitude());
 		assertEquals(longitude, newCoordinate.getLongitude());
-		
+
 		// Verify MountainRange
 		assertNotNull(mrSvc.findById(mtnRangeId));
 		assertNotNull(newLoc.getMountainRange());
@@ -221,8 +223,8 @@ class LocationServiceTest {
 		assertFalse(catSvc.findById(cat1Id).getLocations().contains(newLoc));
 		assertNotNull(catSvc.findById(cat2Id));
 		assertFalse(catSvc.findById(cat2Id).getLocations().contains(newLoc));
-		
-		//Verify counts match for all tables
+
+		// Verify counts match for all tables
 		assertEquals(locationCount, locSvc.index().size());
 		assertEquals(categoryCount, catSvc.index().size());
 		assertEquals(rangeCount, mrSvc.index().size());
@@ -230,26 +232,26 @@ class LocationServiceTest {
 		assertEquals(coordinateCount, coordSvc.index().size());
 	}
 
-	@Test
-	@DisplayName("LocationService Point")
-	void test_point() {
-		// Settings
-		final int locId = 1;
-
-		// Find Location
-		Location location = locSvc.findById(locId);
-		assertNotNull(locId);
-
-//		// Get Point for Location
-//		Point point = location.getPoint();
-//		assertNotNull(point);
-//		final int pointId = point.getId();
-//		point = null;
-//		point = pointSvc.findById(pointId);
-//		assertNotNull(point);
-//		assertEquals(point, location.getPoint());
-//		assertEquals(location, point.getLocation());
-		
-	}
+//	@Test
+//	@DisplayName("LocationService Point")
+//	void test_point() {
+//		// Settings
+//		final int locId = 1;
+//
+//		// Find Location
+//		Location location = locSvc.findById(locId);
+//		assertNotNull(locId);
+//
+////		// Get Point for Location
+////		Point point = location.getPoint();
+////		assertNotNull(point);
+////		final int pointId = point.getId();
+////		point = null;
+////		point = pointSvc.findById(pointId);
+////		assertNotNull(point);
+////		assertEquals(point, location.getPoint());
+////		assertEquals(location, point.getLocation());
+//
+//	}
 
 }

@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `relative_location` (
   CONSTRAINT `fk_relative_location_geometry1`
     FOREIGN KEY (`geometry_id`)
     REFERENCES `geometry` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -100,12 +100,12 @@ CREATE TABLE IF NOT EXISTS `location` (
   CONSTRAINT `fk_location_mountain_range1`
     FOREIGN KEY (`mountain_range_id`)
     REFERENCES `mountain_range` (`id`)
-    ON DELETE SET NULL
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_location_geometry1`
     FOREIGN KEY (`geometry_id`)
     REFERENCES `geometry` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -137,12 +137,12 @@ CREATE TABLE IF NOT EXISTS `point` (
   CONSTRAINT `fk_point_geometry1`
     FOREIGN KEY (`geometry_id`)
     REFERENCES `geometry` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_point_relative_location1`
     FOREIGN KEY (`relative_location_id`)
     REFERENCES `relative_location` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_point_location1`
     FOREIGN KEY (`location_id`)
@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `forecast` (
   CONSTRAINT `fk_forecast_geometry1`
     FOREIGN KEY (`geometry_id`)
     REFERENCES `geometry` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_forecast_point1`
     FOREIGN KEY (`point_id`)

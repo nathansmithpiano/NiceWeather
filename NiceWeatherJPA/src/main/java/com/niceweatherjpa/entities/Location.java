@@ -28,7 +28,7 @@ public class Location {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String name;
 
 	private Double elevation;
@@ -37,11 +37,11 @@ public class Location {
 	@JoinColumn(name = "geometry_id")
 	@Cascade(CascadeType.ALL)
 	private Geometry geometry;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "mountain_range_id")
 	private MountainRange mountainRange;
-	
+
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "location_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -78,7 +78,7 @@ public class Location {
 	public void setElevation(Double elevation) {
 		this.elevation = elevation;
 	}
-	
+
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -86,7 +86,7 @@ public class Location {
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 	}
-	
+
 	public MountainRange getMountainRange() {
 		return mountainRange;
 	}
@@ -94,7 +94,7 @@ public class Location {
 	public void setMountainRange(MountainRange mountainRange) {
 		this.mountainRange = mountainRange;
 	}
-	
+
 	public Set<Category> getCategories() {
 		return categories;
 	}
@@ -156,16 +156,16 @@ public class Location {
 		builder.append(name);
 		builder.append("\nelevation=");
 		builder.append(elevation);
-		
+
 		// if Location has Geometry
 		if (geometry != null) {
 			builder.append("\nGeometry: ");
-			
+
 			// if Geometry has only 1 Coordinate (should only have 1)
 			if (geometry.getCoordinates() != null && geometry.getCoordinates().size() == 1) {
 				// Get first coordinate in Geometry
 				Coordinate coordinate = geometry.getCoordinates().iterator().next();
-				
+
 				// print id, latitude, and longitude of Coordinate
 				builder.append(" Coordinate (id: " + coordinate.getId());
 				builder.append(", latitude: " + coordinate.getLatitude());
@@ -173,11 +173,11 @@ public class Location {
 			} else {
 				builder.append(" INVALID COORDINATE, ERROR");
 			}
-			
+
 		} else {
 			builder.append("\nNO GEOMETRY");
 		}
-		
+
 		// if Location has MountainRange
 		if (mountainRange != null) {
 			// print name and id of MountainRange
@@ -186,17 +186,17 @@ public class Location {
 		} else {
 			builder.append("\nNO MOUNTAIN RANGE");
 		}
-		
+
 		// if Location has categories
 		if (categories != null && categories.size() > 0) {
 			// print name and id of each Category
 			Iterator<Category> it = categories.iterator();
 			int count = 0;
-			
+
 			while (it.hasNext()) {
 				Category category = it.next();
 				count++;
-				
+
 				builder.append("\nCategory " + count + ": ");
 				builder.append(category.getName());
 				builder.append(" (id: " + category.getId() + ")");
@@ -204,7 +204,7 @@ public class Location {
 		} else {
 			builder.append("\nNO CATEGORIES");
 		}
-		
+
 //		if (point != null) {
 //			builder.append("\npoint.getId()=");
 //			builder.append(point.getId());

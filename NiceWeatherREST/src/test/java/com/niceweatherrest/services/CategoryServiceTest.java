@@ -47,7 +47,7 @@ class CategoryServiceTest {
 	@DisplayName("CategoryService update()")
 	void test_update() {
 		// Update and restore name
-		
+
 		// Settings
 		final int locId = 1;
 		final String updatedName = "Updated";
@@ -98,32 +98,32 @@ class CategoryServiceTest {
 	@DisplayName("CategoryService create, read, delete without locations")
 	void test_CR_D() {
 		// Create and delete new Category
-		
+
 		// Settings
 		final String newName = "New Category Name";
 		final int categoriesCount = catSvc.index().size();
-		
+
 		// Create new Category locally
 		Category category = new Category();
 		category.setName(newName);
-		
+
 		// Persist to DB
 		Category newCategory = catSvc.create(category);
 		final int newId = newCategory.getId();
 		assertNotNull(newCategory);
-		
+
 		// Verify Category
 		assertEquals(categoriesCount + 1, catSvc.index().size());
 		assertEquals(newName, newCategory.getName());
 		newCategory = catSvc.findById(newId);
 		assertNotNull(newCategory);
 		assertEquals(newName, newCategory.getName());
-		
+
 		// Delete from DB
 		assertTrue(catSvc.deleteById(newId));
 		assertNull(catSvc.findById(newId));
 	}
-	
+
 //	@Test
 //	@DisplayName("CategoryService delete, delete from join table")
 //	void test_delete_join_table() {
@@ -152,5 +152,5 @@ class CategoryServiceTest {
 //		// Commenting out this test so it doesn't interfere with DB ids
 //		
 //	}
-	
+
 }

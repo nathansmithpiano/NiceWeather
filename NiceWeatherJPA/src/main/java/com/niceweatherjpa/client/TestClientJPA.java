@@ -4,10 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import com.niceweatherjpa.entities.Category;
-import com.niceweatherjpa.entities.Coordinate;
-import com.niceweatherjpa.entities.Geometry;
-import com.niceweatherjpa.entities.Location;
 import com.niceweatherjpa.entities.MountainRange;
 
 public class TestClientJPA {
@@ -29,7 +25,7 @@ public class TestClientJPA {
 		em = emf.createEntityManager();
 
 		printAllToStrings();
-		
+
 		em.close();
 	}
 
@@ -37,7 +33,7 @@ public class TestClientJPA {
 		// no memory leaks
 		emf.close();
 	}
-	
+
 	private void printAllToStrings() {
 //		Category category = em.find(Category.class, 1);
 //		System.out.println(category);
