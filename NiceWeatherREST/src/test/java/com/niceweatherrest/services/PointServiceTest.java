@@ -1,26 +1,11 @@
 //package com.niceweatherrest.services;
 //
-//import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.junit.jupiter.api.Assertions.assertNotNull;
-//import static org.junit.jupiter.api.Assertions.assertTrue;
-//
-//import java.util.List;
 //
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
-//
-//import com.niceweatherjpa.entities.Category;
-//import com.niceweatherjpa.entities.Coordinate;
-//import com.niceweatherjpa.entities.Forecast;
-//import com.niceweatherjpa.entities.Geometry;
-//import com.niceweatherjpa.entities.Location;
-//import com.niceweatherjpa.entities.MountainRange;
-//import com.niceweatherjpa.entities.Point;
-//import com.niceweatherjpa.entities.RelativeLocation;
 //
 //@SpringBootTest
 //class PointServiceTest {

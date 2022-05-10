@@ -211,6 +211,7 @@ public class Location {
 //		} else {
 //			builder.append("\nNO POINT");
 //		}
+		
 		builder.append("\n*** END Location ***");
 		return builder.toString();
 	}
