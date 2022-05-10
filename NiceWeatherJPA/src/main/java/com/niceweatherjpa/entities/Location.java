@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -33,6 +35,7 @@ public class Location {
 
 	@OneToOne
 	@JoinColumn(name = "geometry_id")
+	@Cascade(CascadeType.ALL)
 	private Geometry geometry;
 	
 	@ManyToOne
@@ -42,6 +45,7 @@ public class Location {
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "location_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+	@Cascade(CascadeType.MERGE)
 	private Set<Category> categories;
 
 //	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)

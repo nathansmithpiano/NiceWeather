@@ -13,6 +13,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -30,6 +35,8 @@ public class Geometry {
 //	private Point point;
 	
 	@OneToMany(mappedBy = "geometry")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade(CascadeType.ALL)
 	private Set<Coordinate> coordinates;
 	
 	@JsonIgnore

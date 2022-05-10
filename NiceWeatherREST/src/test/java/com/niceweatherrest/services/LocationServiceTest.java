@@ -1,6 +1,7 @@
 package com.niceweatherrest.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.niceweatherjpa.entities.Category;
 import com.niceweatherjpa.entities.Coordinate;
+import com.niceweatherjpa.entities.Geometry;
 import com.niceweatherjpa.entities.Location;
 import com.niceweatherjpa.entities.MountainRange;
 
@@ -32,6 +34,9 @@ class LocationServiceTest {
 	@Autowired
 	private CoordinateServiceImpl coordSvc;
 	
+	@Autowired
+	private GeometryServiceImpl geoSvc;
+	
 //	@Autowired
 //	private PointServiceImpl pointSvc;
 
@@ -41,6 +46,7 @@ class LocationServiceTest {
 		assertNotNull(mrSvc);
 		assertNotNull(catSvc);
 		assertNotNull(coordSvc);
+		assertNotNull(geoSvc);
 //		assertNotNull(pointSvc);
 	}
 
@@ -50,6 +56,7 @@ class LocationServiceTest {
 		mrSvc = null;
 		catSvc = null;
 		coordSvc = null;
+		geoSvc = null;
 //		pointSvc = null;
 	}
 
@@ -63,6 +70,8 @@ class LocationServiceTest {
 	@Test
 	@DisplayName("LocationService update()")
 	void test_update() {
+		// Change and revert name
+		
 		// Settings
 		final int idInit = 1;
 		final String updatedName = "Updated";
@@ -104,6 +113,8 @@ class LocationServiceTest {
 	@Test
 	@DisplayName("LocationService CR_D with Coordinate, Category, MountainRange")
 	void test_CR_D() {
+		// 
+		
 		// Settings
 		String newName = "New Name";
 		final double latitude = 12.34;
@@ -111,6 +122,12 @@ class LocationServiceTest {
 		final int mtnRangeId = 9;
 		final int cat1Id = 1;
 		final int cat2Id = 5;
+		final String geometryType = "Temp Type";
+		final int locationCount = locSvc.index().size();
+		final int categoryCount = catSvc.index().size();
+		final int rangeCount = mrSvc.index().size();
+		final int geometryCount = geoSvc.index().size();
+		final int coordinateCount = coordSvc.index().size();
 
 		// Create new Location locally
 		Location loc = new Location();
@@ -120,8 +137,18 @@ class LocationServiceTest {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setLatitude(latitude);
 		coordinate.setLongitude(longitude);
+		
+		// Create new Geometry locally (non-null)
+		Geometry geometry = new Geometry();
+		geometry.setType(geometryType);
+		geometry.addCoordinate(coordinate);
+		
+		// Verify Coordinate and Geometry locally
+		assertEquals(geometry, coordinate.getGeometry());
+		assertTrue(geometry.getCoordinates().contains(coordinate));
+		
 		// Set to loc
-//		loc.setCoordinate(coordinate);
+		loc.setGeometry(geometry);
 
 		// Find 2 Categories from DB
 		Category cat1 = catSvc.findById(cat1Id);
@@ -147,12 +174,26 @@ class LocationServiceTest {
 		assertNotNull(newLoc);
 		assertTrue(newLoc.getId() > 0);
 
-		// Verify Coordinate
-//		assertNotNull(newLoc.getCoordinate());
-//		assertEquals(latitude, newLoc.getCoordinate().getLatitude());
-//		assertEquals(longitude, newLoc.getCoordinate().getLongitude());
-//		final int coordId = newLoc.getCoordinate().getId();
-
+		// get new Geometry from DB
+		assertNotNull(newLoc.getGeometry());
+		final int newGeometryId = newLoc.getGeometry().getId();
+		Geometry newGeometry = geoSvc.findById(newGeometryId);
+		assertNotNull(newGeometry);
+		
+		// Get new Coordinate from DB
+		assertNotNull(newGeometry.getCoordinates());
+		assertTrue(newGeometry.getCoordinates().size() > 0);
+		assertTrue(newGeometry.getCoordinates().size() == 1);
+		final int newCoordinateId = newGeometry.getCoordinates().iterator().next().getId();
+		Coordinate newCoordinate = coordSvc.findById(newCoordinateId);
+		assertNotNull(newCoordinate);
+		
+		// Verify Geometry and Coordinate
+		assertEquals(newGeometry, newCoordinate.getGeometry());
+		assertTrue(newGeometry.getCoordinates().contains(newCoordinate));
+		assertEquals(latitude, newCoordinate.getLatitude());
+		assertEquals(longitude, newCoordinate.getLongitude());
+		
 		// Verify MountainRange
 		assertNotNull(mrSvc.findById(mtnRangeId));
 		assertNotNull(newLoc.getMountainRange());
@@ -169,15 +210,24 @@ class LocationServiceTest {
 		assertNull(locSvc.findById(newId));
 
 		// Verify Coordinate deleted
-//		assertNull(coordSvc.findById(coordId));
+		assertNull(coordSvc.findById(newCoordinateId));
 
 		// Verify MountainRange NOT deleted
 		assertNotNull(mrSvc.findById(mtnRangeId));
+		assertFalse(mrSvc.findById(mtnRangeId).getLocations().contains(newLoc));
 
 		// Verify Categories NOT deleted
 		assertNotNull(catSvc.findById(cat1Id));
+		assertFalse(catSvc.findById(cat1Id).getLocations().contains(newLoc));
 		assertNotNull(catSvc.findById(cat2Id));
-
+		assertFalse(catSvc.findById(cat2Id).getLocations().contains(newLoc));
+		
+		//Verify counts match for all tables
+		assertEquals(locationCount, locSvc.index().size());
+		assertEquals(categoryCount, catSvc.index().size());
+		assertEquals(rangeCount, mrSvc.index().size());
+		assertEquals(geometryCount, geoSvc.index().size());
+		assertEquals(coordinateCount, coordSvc.index().size());
 	}
 
 	@Test
