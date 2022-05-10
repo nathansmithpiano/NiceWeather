@@ -46,6 +46,8 @@ class CategoryServiceTest {
 	@Test
 	@DisplayName("CategoryService update()")
 	void test_update() {
+		// Update and restore name
+		
 		// Settings
 		final int locId = 1;
 		final String updatedName = "Updated";
@@ -93,8 +95,10 @@ class CategoryServiceTest {
 	}
 
 	@Test
-	@DisplayName("CategoryService CR_D with Location")
+	@DisplayName("CategoryService create, read, delete without locations")
 	void test_CR_D() {
+		// Create and delete new Category
+		
 		// Settings
 		final String newName = "New Category Name";
 		final int categoriesCount = catSvc.index().size();
@@ -119,5 +123,34 @@ class CategoryServiceTest {
 		assertTrue(catSvc.deleteById(newId));
 		assertNull(catSvc.findById(newId));
 	}
-
+	
+//	@Test
+//	@DisplayName("CategoryService delete, delete from join table")
+//	void test_delete_join_table() {
+//		
+//		
+//		// Settings
+//		final int categoryId = 1; // "Peak"
+//		
+//		// Find Category
+//		final Category backup = catSvc.findById(categoryId);
+//		assertNotNull(backup);
+//		
+//		// Get Category locations
+//		assertNotNull(backup.getLocations());
+//		final Set<Location> initialLocations = backup.getLocations();
+//		assertNotNull(initialLocations);
+//		
+//		// Delete Category
+//		assertTrue(catSvc.deleteById(categoryId));
+//		
+//		// Verify
+//		assertFalse(catSvc.index().contains(backup));
+//		
+//		// NOTE: on deleting, join table references are deleted, locations no longer contain category
+//		// Should not allow anyone to delete a Category but it is possible
+//		// Commenting out this test so it doesn't interfere with DB ids
+//		
+//	}
+	
 }

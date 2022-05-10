@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `location` (
   CONSTRAINT `fk_location_mountain_range1`
     FOREIGN KEY (`mountain_range_id`)
     REFERENCES `mountain_range` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_location_geometry1`
     FOREIGN KEY (`geometry_id`)
@@ -162,16 +162,15 @@ CREATE TABLE IF NOT EXISTS `location_category` (
   `category_id` INT NOT NULL,
   PRIMARY KEY (`location_id`, `category_id`),
   INDEX `fk_location_has_category_category1_idx` (`category_id` ASC),
-  INDEX `fk_location_has_category_location_idx` (`location_id` ASC),
   CONSTRAINT `fk_location_has_category_location`
     FOREIGN KEY (`location_id`)
     REFERENCES `location` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_location_has_category_category1`
     FOREIGN KEY (`category_id`)
     REFERENCES `category` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
