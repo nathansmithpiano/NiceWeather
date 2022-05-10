@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class PeriodTest {
@@ -56,6 +57,7 @@ class PeriodTest {
 	}
 
 	@Test
+	@DisplayName("Period mapping")
 	void test_Period_mapping() {
 		assertEquals(period1Id, period1.getId());
 		assertEquals(period1Number, period1.getNumber());
@@ -64,6 +66,7 @@ class PeriodTest {
 	}
 	
 	@Test
+	@DisplayName("Period Forecast mapping")
 	void test_Period_Forecast_mapping() {
 		Forecast period1Forecast = period1.getForecast();
 		assertNotNull(period1Forecast);

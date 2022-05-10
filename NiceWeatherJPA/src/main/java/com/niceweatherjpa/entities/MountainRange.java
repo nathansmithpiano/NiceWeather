@@ -107,7 +107,7 @@ public class MountainRange {
 		if (subranges == null) {
 			subranges = new LinkedHashSet<>();
 		}
-		if (!subranges.contains(mountainRange)) {
+		if (mountainRange != null && !subranges.contains(mountainRange)) {
 			subranges.add(mountainRange);
 			mountainRange.setParent(this);
 		}
@@ -116,6 +116,7 @@ public class MountainRange {
 	public void removeSubrange(MountainRange mountainRange) {
 		if (mountainRange != null && subranges.contains(mountainRange)) {
 			subranges.remove(mountainRange);
+			
 			if (mountainRange.getParent().equals(this)) {
 				mountainRange.setParent(null);
 			}

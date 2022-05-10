@@ -16,6 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -45,10 +50,12 @@ public class RelativeLocation {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
+	@Cascade(CascadeType.ALL)
 	private Geometry geometry;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "relativeLocation")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Point> points;
 
 	public RelativeLocation() {
@@ -125,6 +132,10 @@ public class RelativeLocation {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
+		
+		if (geometry != null && !geometry.getRelativeLocations().contains(this)) {
+			geometry.addRelativeLocation(this);
+		}
 	}
 
 	public Set<Point> getPoints() {
@@ -139,7 +150,7 @@ public class RelativeLocation {
 		if (points == null) {
 			points = new LinkedHashSet<>();
 		}
-		if (!points.contains(point)) {
+		if (point != null && !points.contains(point)) {
 			points.add(point);
 			point.setRelativeLocation(this);
 		}
@@ -148,7 +159,10 @@ public class RelativeLocation {
 	public void removePoint(Point point) {
 		if (point != null && points.contains(point)) {
 			points.remove(point);
-			point.setRelativeLocation(null);
+			
+			if (point != null && point.getRelativeLocation() == this) {
+				point.setRelativeLocation(null);
+			}
 		}
 	}
 
@@ -208,14 +222,6 @@ public class RelativeLocation {
 
 		} else {
 			builder.append("\nNO GEOMETRY");
-		}
-		
-		
-		if (points != null && points.size() > 0) {
-			builder.append("\npoints.size()=");
-			builder.append(points.size());
-		} else {
-			builder.append("\nNO POINTS");
 		}
 		
 		// if RelativeLocation has points

@@ -103,7 +103,10 @@ public class Coordinate {
 		builder.append(latitude);
 		builder.append("\nlongitude=");
 		builder.append(longitude);
+		
+		//if Coordinate has Geometry
 		if (geometry != null) {
+			// print ID of Geometry
 			builder.append("\nGeometry ID: ");
 			builder.append(geometry.getId());
 		} else {

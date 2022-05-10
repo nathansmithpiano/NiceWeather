@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class ForecastTest {
@@ -66,6 +67,7 @@ class ForecastTest {
 	}
 
 	@Test
+	@DisplayName("Forecast mapping")
 	void test_Forecast_mapping() {
 		assertEquals(forecast1Id, forecast1.getId());
 		assertEquals(forecast1Url, forecast1.getUrl());
@@ -76,6 +78,7 @@ class ForecastTest {
 	}
 	
 	@Test
+	@DisplayName("Forecast Point mapping")
 	void test_Forecast_Point_mapping() {
 		Point forecast1Point = forecast1.getPoint();
 		assertNotNull(forecast1Point);
@@ -88,6 +91,7 @@ class ForecastTest {
 	}
 	
 	@Test
+	@DisplayName("Forecast Geometry mapping")
 	void test_Forecast_Geometry_mapping() {
 		// Verify forecast1
 		Geometry forecast1Geometry = forecast1.getGeometry();
@@ -105,6 +109,7 @@ class ForecastTest {
 	}
 	
 	@Test
+	@DisplayName("Forecast multiple Period mapping")
 	void test_Forecast_Period_mapping() {
 		// Verify forecast1
 		Set<Period> forecast1Periods = forecast1.getPeriods();

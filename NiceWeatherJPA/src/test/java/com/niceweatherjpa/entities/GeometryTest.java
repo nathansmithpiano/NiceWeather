@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -32,6 +34,13 @@ class GeometryTest {
 	private final int geometryWithMultipleCoordinatesId = 830;
 	private final String geometryWithMultipleCoordinatesType = "Polygon";
 	private final int geometryWithMultipleCoordinatesCoordinateCount = 5;
+	private final int geometryWithRelativeLocationId = 829;
+	private final int geometryWithPointId = 828;
+	private final int pointId = 1;
+	private final String pointIdUrl = "https://api.weather.gov/points/39.1177,-106.4453";
+	private final int geometryWithForecastsId = 831;
+	private final int forecastId = 1;
+	private final String forecastUrl = "https://api.weather.gov/gridpoints/PUB/33,107/forecast";
 	
 	
 	@BeforeAll
@@ -65,7 +74,7 @@ class GeometryTest {
 	}
 	
 	@Test
-	@DisplayName("Geometry Coordinate mapping")
+	@DisplayName("Geometry single Coordinate mapping")
 	void test_Geometry_Coordinate_mapping() {
 		assertNotNull(geometry.getCoordinates());
 		assertTrue(geometry.getCoordinates().size() > 0);
@@ -98,37 +107,49 @@ class GeometryTest {
 		assertEquals(geometry1LocationName, geometry.getLocation().getName());
 	}
 	
-//	@Test
-//	void test_Geometry_Point_mapping() {
-//		assertNotNull(geometry);
-//		assertNotNull(geometry.getPoint());
-//		assertEquals(1, geometry.getPoint().getId());
-//		assertEquals("https://api.weather.gov/points/39.1177,-106.4453", geometry.getPoint().getIdUrl());
-//	}
+	@Test
+	@DisplayName("Geometry multiple RelativeLocation mapping")
+	void test_Geometry_multiple_RelativeLocation_mapping() {
+		geometry = em.find(Geometry.class, geometryWithRelativeLocationId);
+		assertNotNull(geometry);
+		Set<RelativeLocation> relativeLocations = geometry.getRelativeLocations();
+		assertNotNull(relativeLocations);
+		assertTrue(relativeLocations.size() > 0);
+		
+		//Verify Geometry within RelativeLocation's Geometry
+		boolean found = false;
+		for (RelativeLocation rLoc : relativeLocations) {
+			if (rLoc.getGeometry() == geometry) {
+				found = true;
+			}
+		}
+		assertTrue(found);
+	}
 	
-//	@Test
-//	void test_Geometry_RelativeLocation_mapping() {
-//		geometry = em.find(Geometry.class, 2);
-//		assertNotNull(geometry);
-//		assertNotNull(geometry.getRelativeLocationList());
-//		assertTrue(geometry.getRelativeLocationList().size() > 0);
-//		assertEquals("Twin Lakes", geometry.getRelativeLocationList().get(0).getCity());
-//	}
+	@Test
+	@DisplayName("Geometry Point mapping")
+	void test_Geometry_Point_mapping() {
+		geometry = em.find(Geometry.class, geometryWithPointId);
+		assertNotNull(geometry);
+		assertNotNull(geometry.getPoint());
+		assertEquals(pointId, geometry.getPoint().getId());
+		assertEquals(pointIdUrl, geometry.getPoint().getIdUrl());
+	}
 	
-//	@Test
-//	void test_Geometry_Forecast_mapping() {
-//		geometry = em.find(Geometry.class, 3);
-//		assertNotNull(geometry);
-//		assertNotNull(geometry.getForecastList());
-//		assertTrue(geometry.getForecastList().size() > 0);
-//		assertEquals(1, geometry.getForecastList().get(0).getId());
-//		assertEquals("https://api.weather.gov/gridpoints/PUB/33,107/forecast", geometry.getForecastList().get(0).getUrl());
-//		geometry = em.find(Geometry.class, 4);
-//		assertNotNull(geometry);
-//		assertNotNull(geometry.getForecastList());
-//		assertTrue(geometry.getForecastList().size() > 0);
-//		assertEquals(2, geometry.getForecastList().get(0).getId());
-//		assertEquals("https://api.weather.gov/gridpoints/PUB/33,107/forecast/hourly", geometry.getForecastList().get(0).getUrl());
-//	}
+	@Test
+	@DisplayName("Geometry multiple Forecast mapping")
+	void test_Geometry_Forecast_mapping() {
+		geometry = em.find(Geometry.class, geometryWithForecastsId);
+		assertNotNull(geometry);
+		assertNotNull(geometry.getForecasts());
+		assertTrue(geometry.getForecasts().size() > 0);
+		
+		// Get first Forecast
+		Forecast forecast = geometry.getForecasts().iterator().next();
+		assertNotNull(forecast);
+		assertEquals(forecastId, forecast.getId());
+		assertEquals(forecastUrl, forecast.getUrl());
+		geometry = em.find(Geometry.class, 4);
+	}
 
 }

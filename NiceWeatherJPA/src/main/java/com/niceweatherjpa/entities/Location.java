@@ -48,8 +48,9 @@ public class Location {
 	@Cascade(CascadeType.MERGE)
 	private Set<Category> categories;
 
-//	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
-//	private Point point;
+	@OneToOne(mappedBy = "location")
+	@Cascade(CascadeType.ALL)
+	private Point point;
 
 	public Location() {
 		super();
@@ -85,6 +86,10 @@ public class Location {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
+		
+		if (geometry != null && geometry.getLocation() != this) {
+			geometry.setLocation(this);
+		}
 	}
 
 	public MountainRange getMountainRange() {
@@ -93,6 +98,10 @@ public class Location {
 
 	public void setMountainRange(MountainRange mountainRange) {
 		this.mountainRange = mountainRange;
+		
+		if (mountainRange != null && !mountainRange.getLocations().contains(this)) {
+			mountainRange.addLocation(this);
+		}
 	}
 
 	public Set<Category> getCategories() {
@@ -107,7 +116,7 @@ public class Location {
 		if (categories == null) {
 			categories = new LinkedHashSet<>();
 		}
-		if (!categories.contains(category)) {
+		if (category != null && !categories.contains(category)) {
 			categories.add(category);
 			category.addLocation(this);
 		}
@@ -116,19 +125,24 @@ public class Location {
 	public void removeCategory(Category category) {
 		if (categories != null && categories.contains(category)) {
 			categories.remove(category);
+			
 			if (category.getLocations() != null && category.getLocations().contains(this)) {
 				category.removeLocation(this);
 			}
 		}
 	}
 
-//	public Point getPoint() {
-//		return point;
-//	}
-//
-//	public void setPoint(Point point) {
-//		this.point = point;
-//	}
+	public Point getPoint() {
+		return point;
+	}
+
+	public void setPoint(Point point) {
+		this.point = point;
+		
+		if (point != null && point.getLocation() != this) {
+			point.setLocation(this);
+		}
+	}
 
 	@Override
 	public int hashCode() {
@@ -205,12 +219,14 @@ public class Location {
 			builder.append("\nNO CATEGORIES");
 		}
 
-//		if (point != null) {
-//			builder.append("\npoint.getId()=");
-//			builder.append(point.getId());
-//		} else {
-//			builder.append("\nNO POINT");
-//		}
+		// if Location has Point
+		if (point != null) {
+			// print point.getLocation().getName() and id of Point
+			builder.append("\nPoint Location Name: " + point.getLocation().getName());
+			builder.append(" (Point id: " + point.getId() + ")");
+		} else {
+			builder.append("\nNO POINT");
+		}
 		
 		builder.append("\n*** END Location ***");
 		return builder.toString();

@@ -22,11 +22,6 @@ public class Period {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "forecast_id")
-	private Forecast forecast;
-
 	private Integer number;
 
 	private String name;
@@ -67,6 +62,11 @@ public class Period {
 
 	@Column(name = "detailed_forecast")
 	private String detailedForecast;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "forecast_id")
+	private Forecast forecast;
 
 	public Period() {
 		super();
@@ -78,14 +78,6 @@ public class Period {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public Forecast getForecast() {
-		return forecast;
-	}
-
-	public void setForecast(Forecast forecast) {
-		this.forecast = forecast;
 	}
 
 	public Integer getNumber() {
@@ -207,6 +199,18 @@ public class Period {
 	public void setDetailedForecast(String detailedForecast) {
 		this.detailedForecast = detailedForecast;
 	}
+	
+	public Forecast getForecast() {
+		return forecast;
+	}
+
+	public void setForecast(Forecast forecast) {
+		this.forecast = forecast;
+		
+		if (forecast != null && !forecast.getPeriods().contains(this)) {
+			forecast.addPeriod(this);
+		}
+	}
 
 	@Override
 	public int hashCode() {
@@ -232,12 +236,6 @@ public class Period {
 		builder.append(id);
 		builder.append("\nforecast=");
 		builder.append(forecast);
-		if (forecast != null) {
-			builder.append("\nforecast.getId()=");
-			builder.append(forecast.getId());
-		} else {
-			builder.append("\nNO FORECAST");
-		}
 		builder.append("\nnumber=");
 		builder.append(number);
 		builder.append("\nname=");
@@ -268,6 +266,32 @@ public class Period {
 		builder.append(shortForecast);
 		builder.append("\ndetailedForecast=");
 		builder.append(detailedForecast);
+		
+		// if Period has Forecast
+		if (forecast != null) {
+			// print Forecast id, normal/hourly, and Point id and Location name
+			builder.append("\nForecast: ");
+			builder.append("(id: " + forecast.getId());
+			builder.append(", " + (forecast.isHourly() ? "hourly" : "normal"));
+			builder.append(", Point: ");
+			
+			if (forecast.getPoint() != null) {
+				builder.append("id: " + forecast.getPoint().getId());
+				
+				if (forecast.getPoint().getLocation() != null) {
+					builder.append(", Location name: " + forecast.getPoint().getLocation().getName());
+				} else {
+					builder.append(", NO LOCATION");
+				}
+				
+			} else {
+				builder.append(" NO POINT");
+			}
+			
+		} else {
+			builder.append("\nNO FORECAST");
+		}
+		
 		builder.append("\n*** END Period ***");
 		return builder.toString();
 	}

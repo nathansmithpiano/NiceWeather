@@ -196,6 +196,10 @@ public class Forecast {
 
 	public void setPoint(Point point) {
 		this.point = point;
+		
+		if (point != null && !point.getForecasts().contains(this)) {
+			point.addForecast(this);
+		}
 	}
 
 	public Geometry getGeometry() {
@@ -204,6 +208,10 @@ public class Forecast {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
+		
+		if (geometry != null && !geometry.getForecasts().contains(this)) {
+			geometry.addForecast(this);
+		}
 	}
 
 	public Set<Period> getPeriods() {
@@ -279,21 +287,6 @@ public class Forecast {
 		builder.append("\nelevation=");
 		builder.append(elevation);
 		
-		// if Forecast has periods
-		if (periods != null) {
-			// if number of periods is valid (14 or 156)
-			if (periods.size() == 14 || periods.size() == 156) {
-				// Print number of periods
-				builder.append("\nperiods.size()=");
-				builder.append(periods.size());
-			} else {
-				builder.append("\nINVALID NUMBER OF PERIODS (should be 14 or 156)");
-			}
-			
-		} else {
-			builder.append("\nNO PERIODS");
-		}
-		
 		// if Forecast has Point
 		if (point != null) {
 			// print point.getLocation().getName() and id of Point
@@ -327,6 +320,21 @@ public class Forecast {
 			
 		} else {
 			builder.append("\nNO GEOMETRY");
+		}
+		
+		// if Forecast has periods
+		if (periods != null) {
+			// if number of periods is valid (14 or 156)
+			if (periods.size() == 14 || periods.size() == 156) {
+				// Print number of periods
+				builder.append("\nperiods.size()=");
+				builder.append(periods.size());
+			} else {
+				builder.append("\nINVALID NUMBER OF PERIODS (should be 14 or 156)");
+			}
+			
+		} else {
+			builder.append("\nNO PERIODS");
 		}
 		
 		builder.append("\n*** END Forecast ***");

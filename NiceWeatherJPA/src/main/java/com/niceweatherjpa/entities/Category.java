@@ -79,7 +79,7 @@ public class Category {
 		if (locations == null) {
 			locations = new LinkedHashSet<>();
 		}
-		if (!locations.contains(location)) {
+		if (location != null && !locations.contains(location)) {
 			locations.add(location);
 			location.addCategory(this);
 		}
@@ -88,6 +88,7 @@ public class Category {
 	public void removeLocation(Location location) {
 		if (locations != null && locations.contains(location)) {
 			locations.remove(location);
+			
 			if (location.getCategories() != null && location.getCategories().contains(this)) {
 				location.removeCategory(this);
 			}

@@ -90,6 +90,8 @@ class LocationServiceTest {
 		// Update on DB
 		location = locSvc.update(location);
 		assertNotNull(location);
+		
+		// Verify
 		assertEquals(idInit, location.getId());
 		assertEquals(updatedName, location.getName());
 		assertEquals(updatedName, locSvc.findById(idInit).getName()); // changes made
@@ -102,6 +104,8 @@ class LocationServiceTest {
 		// Revert on DB
 		location = locSvc.update(location);
 		assertNotNull(location);
+		
+		// Verify
 		assertEquals(idInit, location.getId());
 		assertEquals(initialName, location.getName());
 		assertEquals(initialName, locSvc.findById(idInit).getName()); // changed

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class PointTest {
@@ -25,6 +26,8 @@ class PointTest {
 	// Settings
 	final int pointId = 1;
 	final String idUrl = "https://api.weather.gov/points/39.1177,-106.4453";
+	private final int locationId = 1;
+	private final String locationName = "Mt. Elbert";
 	final int relativeLocationId = 1;
 	final String relativeLocationCity = "Twin Lakes";
 	final int geometryId = 828;
@@ -57,20 +60,22 @@ class PointTest {
 	}
 
 	@Test
+	@DisplayName("Point mapping")
 	void test_Point_mapping() {
 		assertEquals(pointId, point.getId());
 		assertEquals(idUrl, point.getIdUrl());
 	}
 	
 	@Test
+	@DisplayName("Point Location mapping")
 	void test_Point_Location_mapping() {
-		assertNotNull(point);
 		assertNotNull(point.getLocation());
-		assertEquals(1, point.getLocation().getId());
-		assertEquals("Mt. Elbert", point.getLocation().getName());
+		assertEquals(locationId, point.getLocation().getId());
+		assertEquals(locationName, point.getLocation().getName());
 	}
 	
 	@Test
+	@DisplayName("Point RelativeLocation mapping")
 	void test_Point_RelativeLocation_mapping() {
 		RelativeLocation rloc = point.getRelativeLocation();
 		assertNotNull(rloc);
@@ -79,6 +84,7 @@ class PointTest {
 	}
 	
 	@Test
+	@DisplayName("Point Geometry mapping")
 	void test_Point_Geometry_mapping() {
 		Geometry geometry = point.getGeometry();
 		assertNotNull(geometry);
@@ -87,6 +93,7 @@ class PointTest {
 	}
 	
 	@Test
+	@DisplayName("Point multiple Forecast mapping")
 	void test_Point_Forecast_mapping() {
 		Set<Forecast> forecasts = point.getForecasts();
 		assertNotNull(forecasts);

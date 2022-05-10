@@ -53,10 +53,6 @@ public class Point {
 	private String radarStation;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "point")
-	private Set<Forecast> forecasts;
-	
-	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name = "location_id")
 	private Location location;
@@ -70,6 +66,10 @@ public class Point {
 	@OneToOne
 	@JoinColumn(name = "relative_location_id")
 	private RelativeLocation relativeLocation;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "point")
+	private Set<Forecast> forecasts;
 
 	public Point() {
 		super();
@@ -169,6 +169,10 @@ public class Point {
 
 	public void setLocation(Location location) {
 		this.location = location;
+		
+		if (location != null && location.getPoint() != this) {
+			location.setPoint(this);
+		}
 	}
 
 	public Geometry getGeometry() {
@@ -177,6 +181,10 @@ public class Point {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
+		
+		if (geometry != null && geometry.getPoint() != this) {
+			geometry.setPoint(this);
+		}
 	}
 
 	public RelativeLocation getRelativeLocation() {
@@ -185,6 +193,10 @@ public class Point {
 
 	public void setRelativeLocation(RelativeLocation relativeLocation) {
 		this.relativeLocation = relativeLocation;
+		
+		if (relativeLocation != null && !relativeLocation.getPoints().contains(this)) {
+			relativeLocation.addPoint(this);
+		}
 	}
 
 	public Set<Forecast> getForecasts() {
@@ -199,7 +211,7 @@ public class Point {
 		if (forecasts == null) {
 			forecasts = new LinkedHashSet<>();
 		}
-		if (!forecasts.contains(forecast)) {
+		if (forecast != null && !forecasts.contains(forecast)) {
 			forecasts.add(forecast);
 			forecast.setPoint(this);
 		}
@@ -208,7 +220,10 @@ public class Point {
 	public void removeForecast(Forecast forecast) {
 		if (forecasts != null && forecasts.contains(forecast)) {
 			forecasts.remove(forecast);
-			forecast.setPoint(null);
+			
+			if (forecast != null && forecast.getPoint() == this) {
+				forecast.setPoint(null);
+			}
 		}
 	}
 
@@ -256,25 +271,6 @@ public class Point {
 		builder.append(radarStation);
 		builder.append("\n*** END Point ***");
 		
-		// if Point has forecasts 
-		if (forecasts != null && forecasts.size() > 0) {
-			// if number of forecasts is valid (2)
-			if (forecasts.size() == 2) {
-				//print id and number of periods for each Forecast
-				for (Forecast fc : forecasts) {
-					builder.append("\nForecast (");
-					builder.append(fc.isHourly() ? "hourly" : "normal");
-					builder.append(", id: " + fc.getId() + "): ");
-					builder.append(fc.getPeriods().size() + " periods");
-				}
-				
-			} else {
-				builder.append("\nINVALID NUMBER OF FORECASTS (should be 2");
-			}
-		} else {
-			builder.append("\nNO FORECASTS");
-		}
-		
 		// if Point has Location
 		if (location != null) {
 			// print name and id of Location
@@ -312,6 +308,25 @@ public class Point {
 			builder.append(relativeLocation.getId());
 		} else {
 			builder.append("\nNO RELATIVE LOCATION");
+		}
+		
+		// if Point has forecasts 
+		if (forecasts != null && forecasts.size() > 0) {
+			// if number of forecasts is valid (2)
+			if (forecasts.size() == 2) {
+				//print hourly/normal, id, and number of periods for each Forecast
+				for (Forecast fc : forecasts) {
+					builder.append("\nForecast (");
+					builder.append(fc.isHourly() ? "hourly" : "normal");
+					builder.append(", id: " + fc.getId() + "): ");
+					builder.append(fc.getPeriods().size() + " periods");
+				}
+				
+			} else {
+				builder.append("\nINVALID NUMBER OF FORECASTS (should be 2");
+			}
+		} else {
+			builder.append("\nNO FORECASTS");
 		}
 		
 		return builder.toString();
