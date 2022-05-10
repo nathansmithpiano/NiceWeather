@@ -77,7 +77,6 @@ public class MountainRange {
 			parent.addSubrange(this);
 		}
 		
-		
 	}
 	
 	public Integer getParentId() {

@@ -78,8 +78,8 @@ CREATE TABLE IF NOT EXISTS `mountain_range` (
   CONSTRAINT `fk_mountain_range_mountain_range1`
     FOREIGN KEY (`parent_id`)
     REFERENCES `mountain_range` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 

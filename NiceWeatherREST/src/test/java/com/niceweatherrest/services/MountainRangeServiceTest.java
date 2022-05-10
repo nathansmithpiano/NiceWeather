@@ -359,5 +359,64 @@ class MountainRangeServiceTest {
 		// Verify nothing added or removed
 		assertEquals(numRanges, mrSvc.index().size());
 	}
+	
+//	@Test
+//	@DisplayName("MountainRangeService delete and restore with self-mappings")
+//	void test_delete_self_mappings() {
+//		// Settings
+//		final int rangeCount = mrSvc.index().size();
+//		
+//		// Find MountainRanges and keep for restoring later;
+//		final List<MountainRange> rangesBackup = mrSvc.index();
+//		assertNotNull(rangesBackup);
+//
+//		// Find MountainRange
+//		MountainRange range = mrSvc.findById(rangeId);
+//		assertNotNull(range);
+//		final MountainRange backup = range;
+//		assertNotNull(backup);
+//		assertEquals(rangeId, backup.getId());
+//		
+//		// Find parent and keep for restoring later
+//		assertNotNull(range.getParent());
+//		MountainRange parent = range.getParent();
+//		
+//		// Find subranges and keep for restoring later
+//		assertNotNull(range.getSubranges());
+//		Set<MountainRange> originalSubranges = range.getSubranges();
+//		
+//		// Delete range from DB
+//		assertTrue(mrSvc.deleteById(rangeId));
+//		
+//		// Verify
+//		assertNull(mrSvc.findById(rangeId));
+//		assertFalse(mrSvc.index().contains(range));
+//		
+//		// Check all ranges in DB
+//		for (MountainRange r : mrSvc.index()) {
+//			
+//			// Verify no ranges have deleted range as parent
+//			assertNotEquals(r.getParent(), range);
+//			
+//			// Verify no ranges have deleted range as subrange
+//			assertFalse(r.getSubranges().contains(range));
+//		}
+//		
+//		// Persist backup to DB
+//		MountainRange restored = mrSvc.create(backup);
+//		assertNotNull(restored);
+//		assertNotEquals(rangeId, restored.getId());
+//		
+//		//restored ID does not match original
+//		restored.setId(rangeId);
+//		MountainRange updated = mrSvc.update(restored);
+//		assertNotNull(updated);
+//		assertNotEquals(rangeId, updated.getId());
+//		
+//		// NOTE: on deleting, references cascade to NULL automatically through DB.
+//		// Should not allow anyone to delete a MountainRange but it is possible
+//		// Commenting out this test so it doesn't interfere with DB ids
+//		
+//	}
 
 }
