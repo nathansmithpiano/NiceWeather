@@ -1,10 +1,10 @@
 package com.niceweatherjpa.entities;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +15,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -63,16 +68,20 @@ public class Forecast {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "point_id")
+	@Cascade(CascadeType.MERGE)
 	private Point point;
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
+	@Cascade(CascadeType.ALL)
 	private Geometry geometry;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "forecast")
-	private Set<Period> periods;
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade(CascadeType.ALL)
+	private List<Period> periods;
 
 	public Forecast() {
 		super();
@@ -197,7 +206,7 @@ public class Forecast {
 	public void setPoint(Point point) {
 		this.point = point;
 		
-		if (point != null && !point.getForecasts().contains(this)) {
+		if (point != null && point.getForecasts() != null && !point.getForecasts().contains(this)) {
 			point.addForecast(this);
 		}
 	}
@@ -209,24 +218,25 @@ public class Forecast {
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 		
-		if (geometry != null && !geometry.getForecasts().contains(this)) {
+		if (geometry != null && geometry.getForecasts() != null && !geometry.getForecasts().contains(this)) {
 			geometry.addForecast(this);
 		}
 	}
 
-	public Set<Period> getPeriods() {
+	public List<Period> getPeriods() {
 		return periods;
 	}
 
-	public void setPeriods(Set<Period> periods) {
+	public void setPeriods(List<Period> periods) {
 		this.periods = periods;
 	}
 	
 	public void addPeriod(Period period) {
 		if (periods == null) {
-			periods = new LinkedHashSet<>();
+			periods = new ArrayList<>();
 		}
-		if (!periods.contains(period)) {
+		if (period != null && period.getForecast() != this) {
+			System.err.println("***** THIS RAN - addPeriod " + period.getName());
 			periods.add(period);
 			period.setForecast(this);
 		}
@@ -235,7 +245,9 @@ public class Forecast {
 	public void removePeriod(Period period) {
 		if (periods != null && periods.contains(period)) {
 			periods.remove(period);
-			period.setForecast(null);
+			if (period.getForecast().equals(this)) {
+				period.setForecast(null);
+			}
 		}
 	}
 

@@ -1,9 +1,9 @@
 package com.niceweatherjpa.entities;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,7 +46,7 @@ public class Location {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "location_category", joinColumns = @JoinColumn(name = "location_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	@Cascade(CascadeType.MERGE)
-	private Set<Category> categories;
+	private List<Category> categories;
 
 	@OneToOne(mappedBy = "location")
 	@Cascade(CascadeType.ALL)
@@ -104,17 +104,17 @@ public class Location {
 		}
 	}
 
-	public Set<Category> getCategories() {
+	public List<Category> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(Set<Category> categories) {
+	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
 
 	public void addCategory(Category category) {
 		if (categories == null) {
-			categories = new LinkedHashSet<>();
+			categories = new ArrayList<>();
 		}
 		if (category != null && !categories.contains(category)) {
 			categories.add(category);

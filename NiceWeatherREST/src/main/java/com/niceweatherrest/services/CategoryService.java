@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.Category;
 
 public interface CategoryService {
+	
+	long count();
 
 	List<Category> index();
 

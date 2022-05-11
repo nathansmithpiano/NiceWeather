@@ -14,6 +14,11 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryRepository catRepo;
+	
+	@Override
+	public long count() {
+		return catRepo.count();
+	}
 
 	@Override
 	public List<Category> index() {

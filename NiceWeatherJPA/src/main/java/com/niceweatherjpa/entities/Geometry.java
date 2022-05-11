@@ -1,7 +1,9 @@
 package com.niceweatherjpa.entities;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,9 +32,9 @@ public class Geometry {
 
 	private String type;
 	
-	@OneToMany(mappedBy = "geometry")
+	@OneToMany(mappedBy = "geometry", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@Cascade(CascadeType.ALL)
+	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE})
 	private Set<Coordinate> coordinates;
 	
 	@JsonIgnore
@@ -41,7 +43,7 @@ public class Geometry {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "geometry")
-	private Set<RelativeLocation> relativeLocations;
+	private List<RelativeLocation> relativeLocations;
 	
 //	@JsonIgnore
 	@OneToOne(mappedBy = "geometry")
@@ -49,7 +51,7 @@ public class Geometry {
 	
 //	@JsonIgnore
 	@OneToMany(mappedBy = "geometry")
-	private Set<Forecast> forecasts;
+	private List<Forecast> forecasts;
 
 	public Geometry() {
 		super();
@@ -80,23 +82,30 @@ public class Geometry {
 	}
 	
 	public void addCoordinate(Coordinate coordinate) {
-		if (coordinates == null) {
-			coordinates = new LinkedHashSet<>();
-		}
-		if (!coordinates.contains(coordinate)) {
+		// only add if non-null
+		if (coordinate != null) {
+			if (coordinates == null) {
+				coordinates = new LinkedHashSet<>();
+			}
+			//add to both
 			coordinates.add(coordinate);
 			coordinate.setGeometry(this);
 		}
 	}
 	
 	public void removeCoordinate(Coordinate coordinate) {
-		if (coordinate != null && coordinates.contains(coordinate)) {
+		// only remove if non-null
+		if (coordinate != null) {
 			coordinates.remove(coordinate);
-			
-			if (coordinate != null && coordinate.getGeometry() == this) {
-				coordinate.setGeometry(null);
-			}
+			coordinate.setGeometry(null);
 		}
+//		if (coordinates.contains(coordinate)) {
+//			coordinates.remove(coordinate);
+//			
+//			if (coordinate != null && coordinate.getGeometry() == this) {
+//				coordinate.setGeometry(null);
+//			}
+//		}
 	}
 	
 	public String getLocationName() {
@@ -127,17 +136,17 @@ public class Geometry {
 		}
 	}
 	
-	public Set<RelativeLocation> getRelativeLocations() {
+	public List<RelativeLocation> getRelativeLocations() {
 		return relativeLocations;
 	}
 
-	public void setRelativeLocations(Set<RelativeLocation> relativeLocations) {
+	public void setRelativeLocations(List<RelativeLocation> relativeLocations) {
 		this.relativeLocations = relativeLocations;
 	}
 	
 	public void addRelativeLocation(RelativeLocation relativeLocation) {
 		if (relativeLocations == null) {
-			relativeLocations = new LinkedHashSet<>();
+			relativeLocations = new ArrayList<>();
 		}
 		if (relativeLocation != null && !relativeLocations.contains(relativeLocation)) {
 			relativeLocations.add(relativeLocation);
@@ -167,17 +176,17 @@ public class Geometry {
 		}
 	}
 
-	public Set<Forecast> getForecasts() {
+	public List<Forecast> getForecasts() {
 		return forecasts;
 	}
 
-	public void setForecasts(Set<Forecast> forecasts) {
+	public void setForecasts(List<Forecast> forecasts) {
 		this.forecasts = forecasts;
 	}
 	
 	public void addForecast(Forecast forecast) {
 		if (forecasts == null) {
-			forecasts = new LinkedHashSet<>();
+			forecasts = new ArrayList<>();
 		}
 		if (forecast != null && !forecasts.contains(forecast)) {
 			forecasts.add(forecast);
@@ -234,7 +243,6 @@ public class Geometry {
 				builder.append(" (id: " + coordinate.getId() + "): ");
 				builder.append("latitude: " + coordinate.getLatitude());
 				builder.append(", longitude: " + coordinate.getLongitude());
-				builder.append(", geometryId: " + coordinate.getGeometryId());
 			}
 		} else {
 			builder.append("\nNO COORDINATES");

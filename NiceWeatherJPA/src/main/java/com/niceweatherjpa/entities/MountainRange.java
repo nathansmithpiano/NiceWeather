@@ -1,7 +1,9 @@
 package com.niceweatherjpa.entities;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -39,12 +41,12 @@ public class MountainRange {
 	@OneToMany(mappedBy = "parent")
 	@Cascade(CascadeType.MERGE)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<MountainRange> subranges;
+	private List<MountainRange> subranges;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "mountainRange")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Location> locations;
+	private List<Location> locations;
 
 	public MountainRange() {
 		super();
@@ -95,17 +97,17 @@ public class MountainRange {
 		}
 	}
 
-	public Set<MountainRange> getSubranges() {
+	public List<MountainRange> getSubranges() {
 		return subranges;
 	}
 
-	public void setSubranges(Set<MountainRange> subranges) {
+	public void setSubranges(List<MountainRange> subranges) {
 		this.subranges = subranges;
 	}
 
 	public void addSubrange(MountainRange mountainRange) {
 		if (subranges == null) {
-			subranges = new LinkedHashSet<>();
+			subranges = new ArrayList<>();
 		}
 		if (mountainRange != null && !subranges.contains(mountainRange)) {
 			subranges.add(mountainRange);
@@ -131,17 +133,17 @@ public class MountainRange {
 		}
 	}
 	
-	public Set<Location> getLocations() {
+	public List<Location> getLocations() {
 		return locations;
 	}
 
-	public void setLocations(Set<Location> locations) {
+	public void setLocations(List<Location> locations) {
 		this.locations = locations;
 	}
 	
 	public void addLocation(Location location) {
 		if (locations == null) {
-			locations = new LinkedHashSet<>();
+			locations = new ArrayList<>();
 		}
 		if (!locations.contains(location)) {
 			locations.add(location);

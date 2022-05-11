@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -112,7 +112,7 @@ class ForecastTest {
 	@DisplayName("Forecast multiple Period mapping")
 	void test_Forecast_Period_mapping() {
 		// Verify forecast1
-		Set<Period> forecast1Periods = forecast1.getPeriods();
+		List<Period> forecast1Periods = forecast1.getPeriods();
 		assertNotNull(forecast1Periods);
 		assertTrue(forecast1Periods.size() > 0);
 		assertEquals(forecast1PeriodCount, forecast1Periods.size());
@@ -120,7 +120,7 @@ class ForecastTest {
 		assertEquals(1, forecast1Periods.iterator().next().getNumber());
 		
 		// Verify forecast1
-		Set<Period> forecast2Periods = forecast2.getPeriods();
+		List<Period> forecast2Periods = forecast2.getPeriods();
 		assertNotNull(forecast2Periods);
 		assertTrue(forecast2Periods.size() > 0);
 		assertEquals(forecast2PeriodCount, forecast2Periods.size());

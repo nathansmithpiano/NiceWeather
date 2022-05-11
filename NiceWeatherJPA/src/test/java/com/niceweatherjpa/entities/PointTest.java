@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -95,7 +95,7 @@ class PointTest {
 	@Test
 	@DisplayName("Point multiple Forecast mapping")
 	void test_Point_Forecast_mapping() {
-		Set<Forecast> forecasts = point.getForecasts();
+		List<Forecast> forecasts = point.getForecasts();
 		assertNotNull(forecasts);
 		assertEquals(forecastsCount, forecasts.size());
 		

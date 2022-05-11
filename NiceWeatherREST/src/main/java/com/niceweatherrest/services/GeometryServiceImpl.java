@@ -14,6 +14,11 @@ public class GeometryServiceImpl implements GeometryService {
 
 	@Autowired
 	private GeometryRepository geoRepo;
+	
+	@Override
+	public long count() {
+		return geoRepo.count();
+	}
 
 	@Override
 	public List<Geometry> index() {

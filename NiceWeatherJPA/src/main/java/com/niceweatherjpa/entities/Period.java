@@ -12,6 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -66,6 +71,7 @@ public class Period {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "forecast_id")
+	@Cascade(CascadeType.MERGE)
 	private Forecast forecast;
 
 	public Period() {
@@ -207,7 +213,8 @@ public class Period {
 	public void setForecast(Forecast forecast) {
 		this.forecast = forecast;
 		
-		if (forecast != null && !forecast.getPeriods().contains(this)) {
+		if (forecast != null && forecast.getPeriods() != null && !forecast.getPeriods().contains(this)) {
+			System.err.println("***** THIS RAN - setForecast");
 			forecast.addPeriod(this);
 		}
 	}

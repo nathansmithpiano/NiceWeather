@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.Coordinate;
 
 public interface CoordinateService {
+	
+	long count();
 
 	List<Coordinate> index();
 

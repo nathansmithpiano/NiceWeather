@@ -14,6 +14,11 @@ public class CoordinateServiceImpl implements CoordinateService {
 
 	@Autowired
 	private CoordinateRepository coordRepo;
+	
+	@Override
+	public long count() {
+		return coordRepo.count();
+	}
 
 	@Override
 	public List<Coordinate> index() {

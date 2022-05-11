@@ -1,10 +1,9 @@
 package com.niceweatherjpa.entities;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,7 +55,7 @@ public class RelativeLocation {
 	@JsonIgnore
 	@OneToMany(mappedBy = "relativeLocation")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Point> points;
+	private List<Point> points;
 
 	public RelativeLocation() {
 		super();
@@ -138,17 +137,17 @@ public class RelativeLocation {
 		}
 	}
 
-	public Set<Point> getPoints() {
+	public List<Point> getPoints() {
 		return points;
 	}
 
-	public void setPoints(Set<Point> points) {
+	public void setPoints(List<Point> points) {
 		this.points = points;
 	}
 
 	public void addPoint(Point point) {
 		if (points == null) {
-			points = new LinkedHashSet<>();
+			points = new ArrayList<>();
 		}
 		if (point != null && !points.contains(point)) {
 			points.add(point);

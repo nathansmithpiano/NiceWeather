@@ -1,8 +1,8 @@
 package com.niceweatherjpa.entities;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -69,7 +72,8 @@ public class Point {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "point")
-	private Set<Forecast> forecasts;
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Forecast> forecasts;
 
 	public Point() {
 		super();
@@ -199,17 +203,17 @@ public class Point {
 		}
 	}
 
-	public Set<Forecast> getForecasts() {
+	public List<Forecast> getForecasts() {
 		return forecasts;
 	}
 
-	public void setForecasts(Set<Forecast> forecasts) {
+	public void setForecasts(List<Forecast> forecasts) {
 		this.forecasts = forecasts;
 	}
 
 	public void addForecast(Forecast forecast) {
 		if (forecasts == null) {
-			forecasts = new LinkedHashSet<>();
+			forecasts = new ArrayList<>();
 		}
 		if (forecast != null && !forecasts.contains(forecast)) {
 			forecasts.add(forecast);
