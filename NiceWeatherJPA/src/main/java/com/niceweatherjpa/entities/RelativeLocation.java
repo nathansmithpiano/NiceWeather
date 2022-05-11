@@ -1,9 +1,9 @@
 package com.niceweatherjpa.entities;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,16 +46,16 @@ public class RelativeLocation {
 
 	private Integer bearing;
 	
-	@JsonIgnore
+//	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
-	@Cascade(CascadeType.ALL)
+	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE})
 	private Geometry geometry;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "relativeLocation")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<Point> points;
+	private Set<Point> points;
 
 	public RelativeLocation() {
 		super();
@@ -132,22 +132,22 @@ public class RelativeLocation {
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 		
-		if (geometry != null && !geometry.getRelativeLocations().contains(this)) {
-			geometry.addRelativeLocation(this);
-		}
+//		if (geometry != null && !geometry.getRelativeLocations().contains(this)) {
+//			geometry.addRelativeLocation(this);
+//		}
 	}
 
-	public List<Point> getPoints() {
+	public Set<Point> getPoints() {
 		return points;
 	}
 
-	public void setPoints(List<Point> points) {
+	public void setPoints(Set<Point> points) {
 		this.points = points;
 	}
 
 	public void addPoint(Point point) {
 		if (points == null) {
-			points = new ArrayList<>();
+			points = new LinkedHashSet<>();
 		}
 		if (point != null && !points.contains(point)) {
 			points.add(point);

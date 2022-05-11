@@ -2,6 +2,7 @@ package com.niceweatherrest.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +34,16 @@ class CoordinateServiceTest {
 		geoSvc = null;
 		coordSvc = null;
 	}
+	
+	@Test
+	@DisplayName("CoordinateService index() and count()")
+	void test_index() {
+		assertNotNull(coordSvc.index());
+		assertTrue(coordSvc.count() > 0);
+	}
 
 	@Test
-	@DisplayName("CoordinateService update()")
+	@DisplayName("CoordinateService update() with Geometry")
 	void test_update() {
 		// Settings
 		final int coordinateId = 1;

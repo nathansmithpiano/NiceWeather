@@ -25,8 +25,6 @@ class RelativeLocationServiceTest {
 	// Settings
 	private final int rLocId = 1;
 	
-	private List<RelativeLocation> relativeLocations;
-	
 	@Autowired
 	private RelativeLocationServiceImpl rlSvc;
 	
@@ -41,8 +39,6 @@ class RelativeLocationServiceTest {
 		assertNotNull(rlSvc);
 		assertNotNull(coordSvc);
 		assertNotNull(geoSvc);
-		relativeLocations = rlSvc.index();
-		assertNotNull(relativeLocations);
 	}
 
 	@AfterEach
@@ -53,144 +49,293 @@ class RelativeLocationServiceTest {
 	}
 	
 	@Test
-	@DisplayName("RelativeLocationService index()")
+	@DisplayName("RelativeLocationService index() and count()")
 	void test_index() {
-		assertTrue(relativeLocations.size() > 0);
-	}
-
-	@Test
-	@DisplayName("RelativeLocationService update()")
-	void test_update() {
-		// Change and revert city
-		
-		// Settings
-		final String updatedCity = "Updated City";
-		
-		// Find RelativeLocation in DB
-		RelativeLocation rLoc = rlSvc.findById(rLocId);
-		assertNotNull(rLoc);
-		final String initialCity = rLoc.getCity();
-		
-		// Update locally
-		rLoc.setCity(updatedCity);
-		
-		// Update on DB
-		RelativeLocation rLocUpdated = rlSvc.update(rLoc);
-		assertNotNull(rLocUpdated);
-		rLoc = null;
-		
-		// Verify
-		assertEquals(rLocId, rLocUpdated.getId());
-		RelativeLocation rLocFound = rlSvc.findById(rLocId);
-		rLocUpdated = null;
-		assertEquals(updatedCity, rLocFound.getCity());
-		
-		// Revert locally
-		rLocFound.setCity(initialCity);
-		
-		// Revert on DB
-		RelativeLocation rLocReverted = rlSvc.update(rLocFound);
-		assertNotNull(rLocReverted);
-		rLocFound = null;
-		
-		// Verify
-		assertEquals(rLocId, rLocReverted.getId());
-		RelativeLocation rLocFinal = rlSvc.findById(rLocId);
-		assertNotNull(rLocFinal);
-		rLocReverted = null;
-		assertEquals(initialCity, rLocFinal.getCity());
-		
-		// Verify nothing new created
-		assertEquals(relativeLocations.size(), rlSvc.index().size());
+		assertNotNull(rlSvc.index());
+		assertTrue(rlSvc.count() > 0);
 	}
 	
 	@Test
-	@DisplayName("RelativeLocationService CR_D with Geometry, Coordinate")
-	void test_CR_D() {
-		// Create and delete Coordinate, Geometry, and RelativeLocation
+	@DisplayName("RelativeLocationService CRUD with 1 Geometry and 1 Coordinate")
+	void test_CRUD_with_Geometry_Coordinates() {
+		// 1: Create new RelativeLocation with Geometry and 1 Coordinate and verify
+		// 2: Update RelativeLocation's city and verify
+		// 3: Update RelativeLocation's Geometry's Coordinate and verify
+		// 4: Delete all and verify
 		
 		// Settings
-		final String type = "Test Type";
-		final double latitude = 12.34;
-		final double longitude = -98.76;
-		final int numCoordinates = 1;
-		final int rlCount = rlSvc.index().size();
-		final int coordinateCount = coordSvc.index().size();
-		final int geometryCount = geoSvc.index().size();
+		final Long relativeLocationCountInitial = rlSvc.count();
+		final Long geometryCountInitial = geoSvc.count();
+		final Long coordinateCountInitial = coordSvc.count();
+		final String cityInitial = "New City";
+		final String cityUpdated = "Updated City";
+		final String geometryTypeUpdated = "Updated Type";
+		final int numGeometryCoordinates = 1;
+		final double latitudeInitial = 111.11;
+		final double longitudeInitial = -222.22;
+		final double latitudeUpdated = 333.33;
+		final double longitudeUpdated = -444.44;
 		
-		// Create Coordinate locally
-		Coordinate coordinate = new Coordinate();
-		coordinate.setLatitude(latitude);
-		coordinate.setLongitude(longitude);
+		// ******
+		// STEP 1
+		// ******
 		
-		// Create Geometry locally and add Coordinate
-		Geometry geometry = new Geometry();
-		geometry.addCoordinate(coordinate);
+		// 1.1: Create RelativeLocation locally
+		RelativeLocation rLocInitial = new RelativeLocation();
+		rLocInitial.setCity(cityInitial);
 		
-		// Create RelativeLocation locally and set Geometry
-		RelativeLocation rlNew = new RelativeLocation();
-		rlNew.setType(type);
-		rlNew.setGeometry(geometry);
+		// 1.1: Create Geometry locally
+		Geometry geometryInitial = new Geometry();
 		
-		// Persist all to DB
-		RelativeLocation rlCreated = rlSvc.create(rlNew);
-		assertNotNull(rlCreated);
-		final int rlId = rlCreated.getId();
+		// 1.1: Create Coordinate locally and add to Geometry locally
+		Coordinate coordinateInitial = new Coordinate();
+		coordinateInitial.setLatitude(latitudeInitial);
+		coordinateInitial.setLongitude(longitudeInitial);
+		geometryInitial.addCoordinate(coordinateInitial);
 		
-		// Verify Relative Location from DB
-		RelativeLocation rlFound = rlSvc.findById(rlId);
-		assertNotNull(rlFound);
-		rlCreated = null;
-		assertEquals(type, rlFound.getType());
+		// 1.1: set Geometry to RelativeLocation locally
+		rLocInitial.setGeometry(geometryInitial);
 		
-		// Verify Geometry locally and from DB
-		Geometry geoCreated = rlFound.getGeometry();
-		assertNotNull(geoCreated);
-		final int geoId = geoCreated.getId();
-		Geometry geoFound = geoSvc.findById(geoId);
-		assertNotNull(geoFound);
-		geoCreated = null;
-		assertEquals(geoFound, rlFound.getGeometry());
-		// TODO: contained in geometry's rl set
+		// 1.1: Verify all locally
+		assertNotNull(rLocInitial);
+		assertNotNull(geometryInitial);
+		assertNotNull(rLocInitial.getGeometry());
+		assertEquals(geometryInitial, rLocInitial.getGeometry());
+		assertNotNull(coordinateInitial);
+		assertNotNull(geometryInitial.getCoordinates());
+		assertTrue(geometryInitial.getCoordinates().size() > 0);
+		assertEquals(numGeometryCoordinates, geometryInitial.getCoordinates().size());
 		
-		// Verify Coordinate locally and from DB
-		assertEquals(numCoordinates, geoFound.getCoordinates().size());
-		Coordinate coordCreated = geoFound.getCoordinates().iterator().next();
-		assertNotNull(coordCreated);
-		final int coordId = coordCreated.getId();
-		Coordinate coordFound = coordSvc.findById(coordId);
-		assertNotNull(coordFound);
-		coordCreated = null;
-		assertTrue(geoFound.getCoordinates().contains(coordFound));
-		assertEquals(latitude, coordFound.getLatitude());
-		assertEquals(longitude, coordFound.getLongitude());
+		// DB 1.1: *CREATE* RelativeLocation, Geometry, and Coordinate in DB
+		RelativeLocation newRLoc = rlSvc.create(rLocInitial);
 		
-		// Delete from DB
-		assertTrue(rlSvc.deleteById(rlId));
-		assertNull(rlSvc.findById(rlId));
+		// 1.1: No longer needed, set initial objects to null
+		rLocInitial = null;
+		geometryInitial = null;
+		coordinateInitial = null;
 		
-		// Verify Geometry deleted
-		assertNull(geoSvc.findById(geoId));
-		assertFalse(geoSvc.index().contains(geoFound));
+		// DB 1.1: Verify new counts in DB
+		final long relativeLocationCountNew = rlSvc.count();
+		final long geometryCountNew = geoSvc.count();
+		final long coordinateCountNew = coordSvc.count();
+		assertEquals(relativeLocationCountInitial + 1, relativeLocationCountNew);
+		assertEquals(geometryCountInitial + 1, geometryCountNew);
+		assertEquals(coordinateCountInitial + numGeometryCoordinates, coordinateCountNew);
 		
-		// Verify Coordinate deleted
-		assertNull(coordSvc.findById(coordId));
-		assertFalse(coordSvc.index().contains(coordFound));
+		// 1.1: Verify newRLoc
+		assertNotNull(newRLoc);
+		assertEquals(cityInitial, newRLoc.getCity());
+		final int newId = newRLoc.getId();
 		
-		// Verify no latitude in DB (probably excessive)
-		List<Coordinate> list = coordSvc.index();
-		boolean latFound = false;
-		for (Coordinate coord : list) {
-			if (coord.getLatitude() == latitude) {
-				latFound = true;
-			}
-		}
-		assertFalse(latFound);
+		// 1.1: Verify newRLoc's Geometry and Coordinate
+		assertNotNull(newRLoc.getGeometry());
+		Geometry newRLocGeo = newRLoc.getGeometry();
+		assertNotNull(newRLocGeo);
+		final int newGeoId = newRLocGeo.getId();
 		
-		// Verify counts match for all tables
-		assertEquals(rlCount, rlSvc.index().size());
-		assertEquals(geometryCount, geoSvc.index().size());
-		assertEquals(coordinateCount, coordSvc.index().size());
+		// 1.1: Verify newRLocGeo's Coordinate
+		assertEquals(numGeometryCoordinates, newRLocGeo.getCoordinates().size());
+		Coordinate newRLocGeoCoord = newRLocGeo.getCoordinates().iterator().next();
+		assertNotNull(newRLocGeoCoord);
+		final int newCoordId = newRLocGeoCoord.getId();
+		assertEquals(latitudeInitial, newRLocGeoCoord.getLatitude());
+		assertEquals(longitudeInitial, newRLocGeoCoord.getLongitude());
+		
+		// 1.1: No longer needed, set returned objects to null
+		newRLoc = null;
+		newRLocGeo = null;
+		newRLocGeoCoord = null;
+		
+		// DB 1.2: *RETRIEVE* Find RelativeLocation in DB
+		RelativeLocation foundRLoc = rlSvc.findById(newId);
+		
+		// DB 1.2: Verify counts unchanged
+		assertEquals(relativeLocationCountNew, rlSvc.count());
+		assertEquals(geometryCountNew, geoSvc.count());
+		assertEquals(coordinateCountNew, coordSvc.count());
+		
+		// 1.2: Verify foundRLoc
+		assertNotNull(foundRLoc);
+		assertEquals(newId, foundRLoc.getId());
+		assertEquals(cityInitial, foundRLoc.getCity());
+		
+		// 1.2: Verify foundRLoc's Geometry and Coordinate
+		assertNotNull(foundRLoc.getGeometry());
+		Geometry foundRLocGeo = foundRLoc.getGeometry();
+		assertNotNull(foundRLocGeo);
+		
+		// 1.2: Verify foundRLocGeo Coordinate
+		assertEquals(numGeometryCoordinates, foundRLocGeo.getCoordinates().size());
+		Coordinate foundRLocGeoCoord = foundRLocGeo.getCoordinates().iterator().next();
+		assertNotNull(foundRLocGeoCoord);
+		assertEquals(latitudeInitial, foundRLocGeoCoord.getLatitude());
+		assertEquals(longitudeInitial, foundRLocGeoCoord.getLongitude());
+		
+		// 1.2: No longer needed, set new Geometry and Coordinate
+		foundRLocGeo = null;
+		foundRLocGeoCoord = null;
+		
+		// ******
+		// STEP 2
+		// ******
+		
+		// 2.1: Update RelativeLocation locally
+		foundRLoc.setCity(cityUpdated);
+		
+		// DB 2.1: *UPDATE* Update RelativeLocation in DB
+		RelativeLocation updatedRLoc = rlSvc.update(foundRLoc);
+		
+		// 2.1: No longer needed, set foundRLoc to null
+		foundRLoc = null;
+		
+		// DB 2.1: Verify counts unchanged
+		assertEquals(relativeLocationCountNew, rlSvc.count());
+		assertEquals(geometryCountNew, geoSvc.count());
+		assertEquals(coordinateCountNew, coordSvc.count());
+		
+		// 2.1: Verify updatedRLoc
+		assertNotNull(updatedRLoc);
+		assertEquals(newId, updatedRLoc.getId());
+		assertEquals(cityUpdated, updatedRLoc.getCity());
+		
+		// 2.1: Verify foundRLoc's Geometry and Coordinate
+		assertNotNull(updatedRLoc.getGeometry());
+		Geometry updatedRLocGeo = updatedRLoc.getGeometry();
+		assertNotNull(updatedRLocGeo);
+		
+		// 2.1: Verify foundRLocGeo Coordinate
+		assertEquals(numGeometryCoordinates, updatedRLocGeo.getCoordinates().size());
+		Coordinate updatedRLocGeoCoord = updatedRLocGeo.getCoordinates().iterator().next();
+		assertNotNull(updatedRLocGeoCoord);
+		assertEquals(latitudeInitial, updatedRLocGeoCoord.getLatitude());
+		assertEquals(longitudeInitial, updatedRLocGeoCoord.getLongitude());
+		
+		// 2.1: No longer needed, set objects to null
+		updatedRLoc = null;
+		updatedRLocGeo = null;
+		updatedRLocGeoCoord = null;
+		
+		// DB 2.2: *RETRIEVE* Find RelativeLocation in DB
+		RelativeLocation foundUpdatedRLoc = rlSvc.findById(newId);
+		
+		// DB 2.1: Verify counts unchanged
+		assertEquals(relativeLocationCountNew, rlSvc.count());
+		assertEquals(geometryCountNew, geoSvc.count());
+		assertEquals(coordinateCountNew, coordSvc.count());
+		
+		// 2.1: Verify foundUpdatedRLoc
+		assertNotNull(foundUpdatedRLoc);
+		assertEquals(newId, foundUpdatedRLoc.getId());
+		assertEquals(cityUpdated, foundUpdatedRLoc.getCity());
+		
+		// 2.1: Verify foundUpdatedRLoc's Geometry and Coordinate
+		assertNotNull(foundUpdatedRLoc.getGeometry());
+		Geometry foundUpdatedRLocGeo = foundUpdatedRLoc.getGeometry();
+		assertNotNull(foundUpdatedRLocGeo);
+		
+		// 2.1: Verify foundRLocGeo Coordinate
+		assertEquals(numGeometryCoordinates, foundUpdatedRLocGeo.getCoordinates().size());
+		Coordinate foundUpdatedRLocGeoCoord = foundUpdatedRLocGeo.getCoordinates().iterator().next();
+		assertNotNull(foundUpdatedRLocGeoCoord);
+		assertEquals(latitudeInitial, foundUpdatedRLocGeoCoord.getLatitude());
+		assertEquals(longitudeInitial, foundUpdatedRLocGeoCoord.getLongitude());
+		
+		// 2.1: No longer needed, set objects to null
+		foundUpdatedRLocGeo = null;
+		foundUpdatedRLocGeoCoord = null;
+		
+		// ******
+		// STEP 3
+		// ******
+		
+		// 3.1: Update RelativeLocation's Geometry and Coordinate locally
+		foundUpdatedRLoc.getGeometry().setType(geometryTypeUpdated);
+		foundUpdatedRLoc.getGeometry().getCoordinates().iterator().next().setLatitude(latitudeUpdated);
+		foundUpdatedRLoc.getGeometry().getCoordinates().iterator().next().setLongitude(longitudeUpdated);
+		
+		// DB 3.1: *UPDATE* update foundUpdatedRLoc to include changes on Geometry and Coordinate
+		RelativeLocation updatedRLoc2 = rlSvc.update(foundUpdatedRLoc);
+		
+		// 3.1: No longer needed, set foundRLoc to null
+		foundUpdatedRLoc = null;
+		
+		// DB 3.1: Verify counts unchanged
+		assertEquals(relativeLocationCountNew, rlSvc.count());
+		assertEquals(geometryCountNew, geoSvc.count());
+		assertEquals(coordinateCountNew, coordSvc.count());
+		
+		// 3.1: Verify updatedRLoc2
+		assertNotNull(updatedRLoc2);
+		assertEquals(newId, updatedRLoc2.getId());
+		assertEquals(cityUpdated, updatedRLoc2.getCity());
+		
+		// 3.1: Verify foundRLoc's Geometry and Coordinate
+		assertNotNull(updatedRLoc2.getGeometry());
+		Geometry updatedRLocGeo2 = updatedRLoc2.getGeometry();
+		assertNotNull(updatedRLocGeo2);
+		
+		// 3.1: Verify foundRLocGeo Coordinate
+		assertEquals(numGeometryCoordinates, updatedRLocGeo2.getCoordinates().size());
+		Coordinate updatedRLocGeoCoord2 = updatedRLocGeo2.getCoordinates().iterator().next();
+		assertNotNull(updatedRLocGeoCoord2);
+		assertEquals(latitudeUpdated, updatedRLocGeoCoord2.getLatitude());
+		assertEquals(longitudeUpdated, updatedRLocGeoCoord2.getLongitude());
+		
+		// 3.1: No longer needed, set objects to null
+		updatedRLoc2 = null;
+		updatedRLocGeo2 = null;
+		updatedRLocGeoCoord2 = null;
+		
+		// DB 3.2: *RETRIEVE* Find RelativeLocation, Geometry, and Coordinate in DB
+		RelativeLocation foundUpdatedRLoc2 = rlSvc.findById(newId);
+		Geometry foundUpdatedGeo = geoSvc.findById(newGeoId);
+		Coordinate foundUpdatedCoord = coordSvc.findById(newCoordId);
+		
+		// DB 3.2: Verify counts unchanged
+		assertEquals(relativeLocationCountNew, rlSvc.count());
+		assertEquals(geometryCountNew, geoSvc.count());
+		assertEquals(coordinateCountNew, coordSvc.count());
+		
+		// 3.2: Verify foundUpdatedRLoc2
+		assertNotNull(foundUpdatedRLoc2);
+		assertEquals(newId, foundUpdatedRLoc2.getId());
+		assertEquals(cityUpdated, foundUpdatedRLoc2.getCity());
+		
+		// 3.2: Verify foundUpdatedGeo
+		assertNotNull(foundUpdatedGeo);
+		assertEquals(geometryTypeUpdated, foundUpdatedGeo.getType());
+		assertEquals(numGeometryCoordinates, foundUpdatedGeo.getCoordinates().size());
+		assertNotNull(foundUpdatedGeo.getRelativeLocations());
+		assertTrue(foundUpdatedGeo.getRelativeLocations().size() > 0);
+		assertTrue(foundUpdatedGeo.getRelativeLocations().size() == 1);
+		assertNotNull(foundUpdatedGeo.getRelativeLocations().iterator().next());
+		assertEquals(newId, foundUpdatedGeo.getRelativeLocations().iterator().next().getId());
+		
+		// 3.2: Verify foundRLocGeo Coordinate
+		assertNotNull(foundUpdatedCoord);
+		assertEquals(latitudeUpdated, foundUpdatedCoord.getLatitude());
+		assertEquals(longitudeUpdated, foundUpdatedCoord.getLongitude());
+		assertNotNull(foundUpdatedCoord.getGeometry());
+		assertEquals(newGeoId, foundUpdatedCoord.getGeometry().getId());
+		
+		// 3.2: No longer needed, set objects to null
+		foundUpdatedRLoc2 = null;
+		foundUpdatedGeo = null;
+		foundUpdatedCoord = null;
+		
+		// ******
+		// STEP 4
+		// ******
+		
+		// DB 4.1: *DELETE* Delete RelativeLocation in DB
+		assertTrue(rlSvc.deleteById(newId));
+		assertNull(geoSvc.findById(newGeoId));
+		assertNull(coordSvc.findById(newCoordId));
+		
+		// DB 4.1: Verify counts unchanged
+		assertEquals(relativeLocationCountInitial, rlSvc.count());
+		assertEquals(geometryCountInitial, geoSvc.count());
+		assertEquals(coordinateCountInitial, coordSvc.count());
 	}
 
 }

@@ -43,15 +43,14 @@ class GeometryServiceTest {
 	}
 
 	@Test
-	@DisplayName("GeometryService count()")
+	@DisplayName("GeometryService index() and count()")
 	void test_index() {
-		// Test if count() functions and DB has at least 1 Geometry
 		assertNotNull(geoSvc.index());
 		assertTrue(geoSvc.count() > 0);
 	}
 
 	@Test
-	@DisplayName("GeometryService CRUD with Coordinates")
+	@DisplayName("GeometryService CRUD with many Coordinates")
 	void test_CRUD_with_Coordinates() {
 		// 1: Create new Geometry with many Coordinates and verify
 		// 2: Update Geometry's type and verify
@@ -62,11 +61,11 @@ class GeometryServiceTest {
 		// Settings
 		final Long geometryCountInitial = geoSvc.count();
 		final Long coordinateCountInitial = coordSvc.count();
-		final String geometryType = "test new type";
-		final String updatedType = "test updated type";
+		final String typeInitial = "test new type";
+		final String typeUpdated = "test updated type";
 		final int numCoordinates = 100;
-		final double latitude = 111.11;
-		final double longitude = -222.22;
+		final double latitudeInitial = 111.11;
+		final double longitudeInitial = -222.22;
 		final int numCoordinatesToUpdate = 17;
 		final double updatedLatitude = 333.33;
 		final double updatedLongitude = -444.44;
@@ -82,22 +81,25 @@ class GeometryServiceTest {
 		// ******
 
 		// 1.1: Create Geometry locally
-		Geometry geometry = new Geometry();
-		geometry.setType(geometryType);
+		Geometry geometryInitial = new Geometry();
+		geometryInitial.setType(typeInitial);
 
 		// 1.1: Create Coordinates locally and add to Geometry locally
 		for (int i = 0; i < numCoordinates; i++) {
 			Coordinate coordinate = new Coordinate();
-			coordinate.setLatitude(latitude);
-			coordinate.setLongitude(longitude);
-			geometry.addCoordinate(coordinate);
+			coordinate.setLatitude(latitudeInitial);
+			coordinate.setLongitude(longitudeInitial);
+			geometryInitial.addCoordinate(coordinate);
 		}
 
 		// 1.1: Verify Coordinates added locally
-		assertEquals(numCoordinates, geometry.getCoordinates().size());
+		assertEquals(numCoordinates, geometryInitial.getCoordinates().size());
 
-		// DB 1.1: *CREATE* Geometry and Coordinates to DB
-		Geometry createdGeometry = geoSvc.create(geometry);
+		// DB 1.1: *CREATE* Geometry and Coordinates in DB
+		Geometry createdGeometry = geoSvc.create(geometryInitial);
+		
+		// 1.1: No longer needed, set geometryInitial to null
+		geometryInitial = null;
 
 		// DB 1.1: Verify new counts in DB
 		final long geometryCountNew = geoSvc.count();
@@ -107,16 +109,16 @@ class GeometryServiceTest {
 
 		// 1.1: Verify returned Geometry
 		assertNotNull(createdGeometry);
-		assertEquals(geometryType, createdGeometry.getType());
+		assertEquals(typeInitial, createdGeometry.getType());
 		assertEquals(numCoordinates, createdGeometry.getCoordinates().size());
 		final int newId = createdGeometry.getId();
 
 		// 1.1: Verify returned Geometry's Coordinates
 		for (Coordinate coordinate : createdGeometry.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(geometryType, coordinate.getGeometry().getType());
-			assertEquals(latitude, coordinate.getLatitude());
-			assertEquals(longitude, coordinate.getLongitude());
+			assertEquals(typeInitial, coordinate.getGeometry().getType());
+			assertEquals(latitudeInitial, coordinate.getLatitude());
+			assertEquals(longitudeInitial, coordinate.getLongitude());
 		}
 
 		// 1.1: No longer needed, set returned createdGeometry to null
@@ -132,15 +134,15 @@ class GeometryServiceTest {
 		// 1.2: Verify foundGeometry
 		assertNotNull(foundGeometry);
 		assertEquals(newId, foundGeometry.getId());
-		assertEquals(geometryType, foundGeometry.getType());
+		assertEquals(typeInitial, foundGeometry.getType());
 		assertEquals(numCoordinates, foundGeometry.getCoordinates().size());
 
 		// 1.2: Verify foundGeometry's Coordinates
 		for (Coordinate coordinate : foundGeometry.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(geometryType, coordinate.getGeometry().getType());
-			assertEquals(latitude, coordinate.getLatitude());
-			assertEquals(longitude, coordinate.getLongitude());
+			assertEquals(typeInitial, coordinate.getGeometry().getType());
+			assertEquals(latitudeInitial, coordinate.getLatitude());
+			assertEquals(longitudeInitial, coordinate.getLongitude());
 		}
 
 		// ******
@@ -148,7 +150,7 @@ class GeometryServiceTest {
 		// ******
 
 		// 2.1: Update Geometry locally
-		foundGeometry.setType(updatedType);
+		foundGeometry.setType(typeUpdated);
 
 		// DB 2.1: *UPDATE* Update Geometry in DB
 		Geometry updatedGeometry = geoSvc.update(foundGeometry);
@@ -163,15 +165,15 @@ class GeometryServiceTest {
 		// 2.1: Verify returned updatedGeometry
 		assertNotNull(updatedGeometry);
 		assertEquals(newId, updatedGeometry.getId());
-		assertEquals(updatedType, updatedGeometry.getType());
+		assertEquals(typeUpdated, updatedGeometry.getType());
 		assertEquals(numCoordinates, updatedGeometry.getCoordinates().size());
 
 		// 2.1: Verify returned updatedGeometry's Coordinates
 		for (Coordinate coordinate : updatedGeometry.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
-			assertEquals(latitude, coordinate.getLatitude());
-			assertEquals(longitude, coordinate.getLongitude());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
+			assertEquals(latitudeInitial, coordinate.getLatitude());
+			assertEquals(longitudeInitial, coordinate.getLongitude());
 		}
 
 		// 2.1: No longer needed, set returned updatedGeometry to null
@@ -187,15 +189,15 @@ class GeometryServiceTest {
 		// 2.2: Verify foundUpdatedGeometry
 		assertNotNull(foundUpdatedGeometry);
 		assertEquals(newId, foundUpdatedGeometry.getId());
-		assertEquals(updatedType, foundUpdatedGeometry.getType());
+		assertEquals(typeUpdated, foundUpdatedGeometry.getType());
 		assertEquals(numCoordinates, foundUpdatedGeometry.getCoordinates().size());
 
 		// 2.2: Verify foundUpdatedGeometry's Coordinates
 		for (Coordinate coordinate : foundUpdatedGeometry.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
-			assertEquals(latitude, coordinate.getLatitude());
-			assertEquals(longitude, coordinate.getLongitude());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
+			assertEquals(latitudeInitial, coordinate.getLatitude());
+			assertEquals(longitudeInitial, coordinate.getLongitude());
 		}
 
 		// ******
@@ -216,7 +218,7 @@ class GeometryServiceTest {
 		for (int i = 0; i < numCoordinatesToUpdate; i++) {
 			Coordinate coordinate = iterator2.next();
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
 			assertEquals(updatedLatitude, coordinate.getLatitude());
 			assertEquals(updatedLongitude, coordinate.getLongitude());
 		}
@@ -235,7 +237,7 @@ class GeometryServiceTest {
 		// 3.1: Verify returned updatedGeometryUpdatedCoordinates
 		assertNotNull(updatedGeometryUpdatedCoordinates);
 		assertEquals(newId, updatedGeometryUpdatedCoordinates.getId());
-		assertEquals(updatedType, updatedGeometryUpdatedCoordinates.getType());
+		assertEquals(typeUpdated, updatedGeometryUpdatedCoordinates.getType());
 		assertEquals(numCoordinates, updatedGeometryUpdatedCoordinates.getCoordinates().size());
 
 		// 3.1: Verify returned updatedGeometryUpdatedCoordinates's Coordinates
@@ -243,12 +245,12 @@ class GeometryServiceTest {
 		int numUnchanged = 0;
 		for (Coordinate coordinate : updatedGeometryUpdatedCoordinates.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
 
 			if (coordinate.getLatitude() == updatedLatitude && coordinate.getLongitude() == updatedLongitude) {
 				numChanged++;
 			}
-			if (coordinate.getLatitude() == latitude && coordinate.getLongitude() == longitude) {
+			if (coordinate.getLatitude() == latitudeInitial && coordinate.getLongitude() == longitudeInitial) {
 				numUnchanged++;
 			}
 		}
@@ -268,7 +270,7 @@ class GeometryServiceTest {
 		// 3.2: Verify returned foundUpdatedGeometryUpdatedCoordinates
 		assertNotNull(foundUpdatedGeometryUpdatedCoordinates);
 		assertEquals(newId, foundUpdatedGeometryUpdatedCoordinates.getId());
-		assertEquals(updatedType, foundUpdatedGeometryUpdatedCoordinates.getType());
+		assertEquals(typeUpdated, foundUpdatedGeometryUpdatedCoordinates.getType());
 		assertEquals(numCoordinates, foundUpdatedGeometryUpdatedCoordinates.getCoordinates().size());
 
 		// 3.2: Verify returned foundUpdatedGeometryUpdatedCoordinates's Coordinates
@@ -276,12 +278,12 @@ class GeometryServiceTest {
 		numUnchanged = 0;
 		for (Coordinate coordinate : foundUpdatedGeometryUpdatedCoordinates.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
 
 			if (coordinate.getLatitude() == updatedLatitude && coordinate.getLongitude() == updatedLongitude) {
 				numChanged++;
 			}
-			if (coordinate.getLatitude() == latitude && coordinate.getLongitude() == longitude) {
+			if (coordinate.getLatitude() == latitudeInitial && coordinate.getLongitude() == longitudeInitial) {
 				numUnchanged++;
 			}
 		}
@@ -319,7 +321,7 @@ class GeometryServiceTest {
 		// 4.1: Verify returned updatedGeometry
 		assertNotNull(geometryWithMoreCoordinates);
 		assertEquals(newId, geometryWithMoreCoordinates.getId());
-		assertEquals(updatedType, geometryWithMoreCoordinates.getType());
+		assertEquals(typeUpdated, geometryWithMoreCoordinates.getType());
 		assertEquals(numCoordinates + numCoordinatesToAdd, geometryWithMoreCoordinates.getCoordinates().size());
 
 		// 4.1: Verify returned foundUpdatedGeometryUpdatedCoordinates's Coordinates
@@ -328,12 +330,12 @@ class GeometryServiceTest {
 		int numNew = 0;
 		for (Coordinate coordinate : geometryWithMoreCoordinates.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
 
 			if (coordinate.getLatitude() == updatedLatitude && coordinate.getLongitude() == updatedLongitude) {
 				numChanged++;
 			}
-			if (coordinate.getLatitude() == latitude && coordinate.getLongitude() == longitude) {
+			if (coordinate.getLatitude() == latitudeInitial && coordinate.getLongitude() == longitudeInitial) {
 				numUnchanged++;
 			}
 			if (coordinate.getLatitude() == addedLatitude && coordinate.getLongitude() == addedLongitude) {
@@ -357,7 +359,7 @@ class GeometryServiceTest {
 		// 4.2: Verify returned updatedGeometry
 		assertNotNull(foundGeometryWithMoreCoordinates);
 		assertEquals(newId, foundGeometryWithMoreCoordinates.getId());
-		assertEquals(updatedType, foundGeometryWithMoreCoordinates.getType());
+		assertEquals(typeUpdated, foundGeometryWithMoreCoordinates.getType());
 		assertEquals(numCoordinates + numCoordinatesToAdd, foundGeometryWithMoreCoordinates.getCoordinates().size());
 
 		// 4.2: Verify returned foundUpdatedGeometryUpdatedCoordinates's Coordinates
@@ -366,12 +368,12 @@ class GeometryServiceTest {
 		numNew = 0;
 		for (Coordinate coordinate : foundGeometryWithMoreCoordinates.getCoordinates()) {
 			assertEquals(newId, coordinate.getGeometry().getId());
-			assertEquals(updatedType, coordinate.getGeometry().getType());
+			assertEquals(typeUpdated, coordinate.getGeometry().getType());
 
 			if (coordinate.getLatitude() == updatedLatitude && coordinate.getLongitude() == updatedLongitude) {
 				numChanged++;
 			}
-			if (coordinate.getLatitude() == latitude && coordinate.getLongitude() == longitude) {
+			if (coordinate.getLatitude() == latitudeInitial && coordinate.getLongitude() == longitudeInitial) {
 				numUnchanged++;
 			}
 			if (coordinate.getLatitude() == addedLatitude && coordinate.getLongitude() == addedLongitude) {
@@ -389,7 +391,7 @@ class GeometryServiceTest {
 		// STEP 5
 		// ******
 
-		// DB 5.1: Delete Geometry and all Coordinates from DB
+		// DB 5.1: *DELETE* Delete Geometry and all Coordinates from DB
 		assertTrue(geoSvc.deleteById(newId));
 
 		// DB 5.1: Verify counts unchanged

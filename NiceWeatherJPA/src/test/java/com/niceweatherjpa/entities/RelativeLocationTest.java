@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -68,7 +68,7 @@ class RelativeLocationTest {
 	
 	@Test
 	void test_RelativeLocation_Point_mapping() {
-		List<Point> points = rLoc.getPoints();
+		Set<Point> points = rLoc.getPoints();
 		assertNotNull(points);
 		assertTrue(points.size() > 0);
 		

@@ -1,9 +1,7 @@
 package com.niceweatherjpa.entities;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -42,16 +40,18 @@ public class Geometry {
 	private Location location;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "geometry")
-	private List<RelativeLocation> relativeLocations;
+	@OneToMany(mappedBy = "geometry", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.FALSE)
+//	@Cascade(CascadeType.MERGE)
+	private Set<RelativeLocation> relativeLocations;
 	
-//	@JsonIgnore
+	@JsonIgnore
 	@OneToOne(mappedBy = "geometry")
 	private Point point;
 	
-//	@JsonIgnore
+	@JsonIgnore
 	@OneToMany(mappedBy = "geometry")
-	private List<Forecast> forecasts;
+	private Set<Forecast> forecasts;
 
 	public Geometry() {
 		super();
@@ -99,29 +99,6 @@ public class Geometry {
 			coordinates.remove(coordinate);
 			coordinate.setGeometry(null);
 		}
-//		if (coordinates.contains(coordinate)) {
-//			coordinates.remove(coordinate);
-//			
-//			if (coordinate != null && coordinate.getGeometry() == this) {
-//				coordinate.setGeometry(null);
-//			}
-//		}
-	}
-	
-	public String getLocationName() {
-		if (location != null) {
-			return location.getName();
-		} else {
-			return "NO LOCATION";
-		}
-	}
-	
-	public Integer getLocationId() {
-		if (location != null) {
-			return location.getId();
-		} else {
-			return null;
-		}
 	}
 	
 	public Location getLocation() {
@@ -136,32 +113,48 @@ public class Geometry {
 		}
 	}
 	
-	public List<RelativeLocation> getRelativeLocations() {
+	public Set<RelativeLocation> getRelativeLocations() {
 		return relativeLocations;
 	}
 
-	public void setRelativeLocations(List<RelativeLocation> relativeLocations) {
+	public void setRelativeLocations(Set<RelativeLocation> relativeLocations) {
 		this.relativeLocations = relativeLocations;
 	}
 	
 	public void addRelativeLocation(RelativeLocation relativeLocation) {
-		if (relativeLocations == null) {
-			relativeLocations = new ArrayList<>();
-		}
-		if (relativeLocation != null && !relativeLocations.contains(relativeLocation)) {
+		// only add if non-null
+		if (relativeLocation != null) {
+			if (relativeLocations == null) {
+				relativeLocations = new LinkedHashSet<>();
+			}
+			//add to both
 			relativeLocations.add(relativeLocation);
 			relativeLocation.setGeometry(this);
 		}
+		
+//		if (relativeLocations == null) {
+//			relativeLocations = new LinkedHashSet<>();
+//		}
+//		if (relativeLocation != null && !relativeLocations.contains(relativeLocation)) {
+//			relativeLocations.add(relativeLocation);
+//			relativeLocation.setGeometry(this);
+//		}
 	}
 	
 	public void removeRelativeLocation(RelativeLocation relativeLocation) {
-		if (relativeLocations != null && relativeLocations.contains(relativeLocation)) {
+		// only remove if non-null
+		if (relativeLocation != null) {
 			relativeLocations.remove(relativeLocation);
-			
-			if (relativeLocation.getGeometry() != null && relativeLocation.getGeometry() == this) {
-				relativeLocation.setGeometry(null);
-			}
+			relativeLocation.setGeometry(null);
 		}
+		
+//		if (relativeLocations != null && relativeLocations.contains(relativeLocation)) {
+//			relativeLocations.remove(relativeLocation);
+//			
+//			if (relativeLocation.getGeometry() != null && relativeLocation.getGeometry() == this) {
+//				relativeLocation.setGeometry(null);
+//			}
+//		}
 	}
 	
 	public Point getPoint() {
@@ -176,17 +169,17 @@ public class Geometry {
 		}
 	}
 
-	public List<Forecast> getForecasts() {
+	public Set<Forecast> getForecasts() {
 		return forecasts;
 	}
 
-	public void setForecasts(List<Forecast> forecasts) {
+	public void setForecasts(Set<Forecast> forecasts) {
 		this.forecasts = forecasts;
 	}
 	
 	public void addForecast(Forecast forecast) {
 		if (forecasts == null) {
-			forecasts = new ArrayList<>();
+			forecasts = new LinkedHashSet<>();
 		}
 		if (forecast != null && !forecasts.contains(forecast)) {
 			forecasts.add(forecast);
@@ -202,6 +195,78 @@ public class Geometry {
 				forecast.setGeometry(null);
 			}
 		}
+	}
+	
+	public Set<String> getReferencedBy() {
+		Set<String> output = new LinkedHashSet<>();
+		StringBuilder builder = new StringBuilder();
+		
+		// if Geometry has Location
+		if (location != null) {
+			// show name and id of Location
+			builder.append("Location: " + location.getName());
+			builder.append(" (id: " + location.getId() + ")");
+			output.add(builder.toString());
+			builder = new StringBuilder();
+		}
+		
+		// if Geometry has RelativeLocations
+		if (relativeLocations != null && relativeLocations.size() > 0) {
+			// show id and city of each RelativeLocation
+			Iterator<RelativeLocation> it = relativeLocations.iterator();
+			int count = 0;
+			
+			while (it.hasNext()) {
+				RelativeLocation relativeLocation = it.next();
+				count++;
+				
+				builder.append("RelativeLocation " + count);
+				builder.append(" (id: " + relativeLocation.getId());
+				builder.append(", city: " + relativeLocation.getCity() + ")");
+				output.add(builder.toString());
+				builder = new StringBuilder();
+			}
+		}
+		
+		// if Geometry has Point
+		if (point != null) {
+			// show point.getLocation().getName() and id of Point
+			builder.append("Point Location Name: " + point.getLocation().getName());
+			builder.append(" (Point id: " + point.getId() + ")");
+			output.add(builder.toString());
+			builder = new StringBuilder();
+		}
+		
+		// if Geometry has forecasts 
+		if (forecasts != null && forecasts.size() > 0) {
+			// show id and whether Forecast is hourly or normal
+			// show Forecast's Location id and name
+			// show Location's Point id
+			// show number of Periods for each Forecast
+			for (Forecast fc : forecasts) {
+				builder.append("Forecast (");
+				builder.append(fc.isHourly() ? "hourly" : "normal");
+				builder.append(", id: " + fc.getId() + "): ");
+				
+				// Point and Location details
+				if (fc.getPoint() != null) {
+					builder.append("Point ");
+					builder.append("(id: " + point.getId());
+					
+					if (fc.getPoint().getLocation() != null) {
+						builder.append(", Location id:" + fc.getPoint().getLocation().getId());
+						builder.append(", name: " + fc.getPoint().getLocation().getName() + ")");
+					} else {
+						builder.append(" NO LOCATION)");
+					}
+					
+				}
+				
+				builder.append(fc.getPeriods().size() + " periods");
+			}
+		}
+		
+		return output;
 	}
 
 	@Override
@@ -247,72 +312,8 @@ public class Geometry {
 		} else {
 			builder.append("\nNO COORDINATES");
 		}
-		
-		// if Geometry has Location
-		if (location != null) {
-			// print name and id of Location
-			builder.append("\nLocation: " + location.getName());
-			builder.append(" (id: " + location.getId() + ")");
-		} else {
-			builder.append("\nNO LOCATION");
-		}
-		
-		// if Geometry has RelativeLocations
-		if (relativeLocations != null && relativeLocations.size() > 0) {
-			// print id and city of each RelativeLocation
-			Iterator<RelativeLocation> it = relativeLocations.iterator();
-			int count = 0;
-			
-			while (it.hasNext()) {
-				RelativeLocation relativeLocation = it.next();
-				count++;
-				
-				builder.append("\nRelativeLocation " + count);
-				builder.append(" (id: " + relativeLocation.getId());
-				builder.append(", city: " + relativeLocation.getCity());
-			}
-		} else {
-			builder.append("\nNO RELATIVE LOCATIONS");
-		}
-		
-		// if Geometry has Point
-		if (point != null) {
-			// print point.getLocation().getName() and id of Point
-			builder.append("\nPoint Location Name: " + point.getLocation().getName());
-			builder.append(" (Point id: " + point.getId() + ")");
-		} else {
-			builder.append("\nNO POINT");
-		}
-		
-		// if Geometry has forecasts 
-		if (forecasts != null && forecasts.size() > 0) {
-			//print hourly/normal, id, location id and name, point id, and number of periods for each Forecast
-			for (Forecast fc : forecasts) {
-				builder.append("\nForecast (");
-				builder.append(fc.isHourly() ? "hourly" : "normal");
-				builder.append(", id: " + fc.getId() + "): ");
-				
-				// Point and Location details
-				if (fc.getPoint() != null) {
-					builder.append("Point ");
-					builder.append("(id: " + point.getId());
-					
-					if (fc.getPoint().getLocation() != null) {
-						builder.append(", Location id:" + fc.getPoint().getLocation().getId());
-						builder.append(", name: " + fc.getPoint().getLocation().getName() + ")");
-					} else {
-						builder.append(" NO LOCATION)");
-					}
-					
-				} else {
-					builder.append("NO POINT");
-				}
-				
-				builder.append(fc.getPeriods().size() + " periods");
-			}
-		} else {
-			builder.append("\nNO FORECASTS");
-		}
+		builder.append("\nreferencedBy=");
+		builder.append(getReferencedBy());
 		
 		builder.append("\n*** END Geometry ***");
 		return builder.toString();
