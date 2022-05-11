@@ -7,22 +7,37 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niceweatherjpa.entities.Category;
 import com.niceweatherrest.services.CategoryService;
 
 @RestController
+@RequestMapping("category")
 public class CategoryController {
 
 	@Autowired
 	private CategoryService catSvc;
 
-	@GetMapping("categories")
+	@GetMapping("")
 	public List<Category> index() {
 		return catSvc.index();
+	}
+
+	@GetMapping("/{id}")
+	public Category findById(@PathVariable Integer id, HttpServletResponse res) {
+		Category category = catSvc.findById(id);
+		if (category != null) {
+			res.setStatus(200);
+			return category;
+		} else {
+			res.setStatus(404);
+			return null;
+		}
 	}
 
 	@PostMapping("category/create")

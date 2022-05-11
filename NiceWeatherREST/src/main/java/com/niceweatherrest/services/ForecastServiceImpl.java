@@ -14,6 +14,11 @@ public class ForecastServiceImpl implements ForecastService {
 
 	@Autowired
 	private ForecastRepository forcRepo;
+	
+	@Override
+	public long count() {
+		return forcRepo.count();
+	}
 
 	@Override
 	public List<Forecast> index() {

@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.MountainRange;
 
 public interface MountainRangeService {
+	
+	long count();
 
 	List<MountainRange> index();
 

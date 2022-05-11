@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.Location;
 
 public interface LocationService {
+	
+	long count();
 
 	List<Location> index();
 

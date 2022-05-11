@@ -14,6 +14,11 @@ public class PointServiceImpl implements PointService {
 
 	@Autowired
 	private PointRepository pointRepo;
+	
+	@Override
+	public long count() {
+		return pointRepo.count();
+	}
 
 	@Override
 	public List<Point> index() {

@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.Point;
 
 public interface PointService {
+	
+	long count();
 
 	List<Point> index();
 

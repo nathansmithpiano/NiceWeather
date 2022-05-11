@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.Forecast;
 
 public interface ForecastService {
+	
+	long count();
 
 	List<Forecast> index();
 

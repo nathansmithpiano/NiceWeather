@@ -45,6 +45,7 @@ class GeometryServiceTest {
 	@Test
 	@DisplayName("GeometryService count()")
 	void test_index() {
+		// Test if count() functions and DB has at least 1 Geometry
 		assertNotNull(geoSvc.index());
 		assertTrue(geoSvc.count() > 0);
 	}

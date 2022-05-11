@@ -14,6 +14,11 @@ public class PeriodServiceImpl implements PeriodService {
 
 	@Autowired
 	private PeriodRepository periodRepo;
+	
+	@Override
+	public long count() {
+		return periodRepo.count();
+	}
 
 	@Override
 	public List<Period> index() {

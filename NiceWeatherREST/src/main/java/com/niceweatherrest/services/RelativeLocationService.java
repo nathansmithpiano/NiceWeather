@@ -6,6 +6,8 @@ import com.niceweatherjpa.entities.RelativeLocation;
 
 public interface RelativeLocationService {
 	
+	long count();
+	
 	List<RelativeLocation> index();
 	
 	RelativeLocation findById(int id);

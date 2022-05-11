@@ -14,6 +14,11 @@ public class MountainRangeServiceImpl implements MountainRangeService {
 
 	@Autowired
 	private MountainRangeRepository mrRepo;
+	
+	@Override
+	public long count() {
+		return mrRepo.count();
+	}
 
 	@Override
 	public List<MountainRange> index() {

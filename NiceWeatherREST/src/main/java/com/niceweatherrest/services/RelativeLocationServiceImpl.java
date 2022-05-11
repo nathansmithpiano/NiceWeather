@@ -14,6 +14,11 @@ public class RelativeLocationServiceImpl implements RelativeLocationService {
 
 	@Autowired
 	private RelativeLocationRepository rlRepo;
+	
+	@Override
+	public long count() {
+		return rlRepo.count();
+	}
 
 	@Override
 	public List<RelativeLocation> index() {

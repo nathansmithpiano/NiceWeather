@@ -14,6 +14,11 @@ public class LocationServiceImpl implements LocationService {
 
 	@Autowired
 	private LocationRepository locRepo;
+	
+	@Override
+	public long count() {
+		return locRepo.count();
+	}
 
 	@Override
 	public List<Location> index() {

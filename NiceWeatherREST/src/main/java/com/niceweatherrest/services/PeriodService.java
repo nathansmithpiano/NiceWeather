@@ -5,6 +5,8 @@ import java.util.List;
 import com.niceweatherjpa.entities.Period;
 
 public interface PeriodService {
+	
+	long count();
 
 	List<Period> index();
 
