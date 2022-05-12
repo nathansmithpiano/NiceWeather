@@ -1,9 +1,9 @@
 package com.niceweatherjpa.entities;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +29,7 @@ public class RelativeLocation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String type;
 
 	private String city;
@@ -45,17 +45,18 @@ public class RelativeLocation {
 	private String bearingUnitCode;
 
 	private Integer bearing;
-	
+
 //	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
-	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE})
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	private Geometry geometry;
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "relativeLocation")
+	@Cascade({ CascadeType.MERGE })
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Point> points;
+	private List<Point> points;
 
 	public RelativeLocation() {
 		super();
@@ -124,7 +125,7 @@ public class RelativeLocation {
 	public void setBearing(Integer bearing) {
 		this.bearing = bearing;
 	}
-	
+
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -132,36 +133,36 @@ public class RelativeLocation {
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 		
-//		if (geometry != null && !geometry.getRelativeLocations().contains(this)) {
-//			geometry.addRelativeLocation(this);
-//		}
+		// add to Geometry (RelativeLocation updates Geometry)
+		if (geometry != null) {
+			geometry.addRelativeLocation(this);
+		}
 	}
 
-	public Set<Point> getPoints() {
+	public List<Point> getPoints() {
 		return points;
 	}
 
-	public void setPoints(Set<Point> points) {
+	public void setPoints(List<Point> points) {
 		this.points = points;
 	}
 
 	public void addPoint(Point point) {
-		if (points == null) {
-			points = new LinkedHashSet<>();
-		}
-		if (point != null && !points.contains(point)) {
+		// only add if non-null
+		if (point != null) {
+			if (points == null) {
+				points = new ArrayList<>();
+			}
+			// add only to RelativeLocation (Point updates RelativeLocation)
 			points.add(point);
-			point.setRelativeLocation(this);
 		}
 	}
 
 	public void removePoint(Point point) {
-		if (point != null && points.contains(point)) {
+		// only remove if non-null
+		if (point != null) {
 			points.remove(point);
-			
-			if (point != null && point.getRelativeLocation() == this) {
-				point.setRelativeLocation(null);
-			}
+			point.setRelativeLocation(null);
 		}
 	}
 
@@ -201,7 +202,7 @@ public class RelativeLocation {
 		builder.append(bearingUnitCode);
 		builder.append("\nbearing=");
 		builder.append(bearing);
-		
+
 		// if RelativeLocation has Geometry
 		if (geometry != null) {
 			builder.append("\nGeometry: ");
@@ -222,7 +223,7 @@ public class RelativeLocation {
 		} else {
 			builder.append("\nNO GEOMETRY");
 		}
-		
+
 		// if RelativeLocation has points
 		if (points != null && points.size() > 0) {
 			// print location.getName() and id of each Point
@@ -234,20 +235,20 @@ public class RelativeLocation {
 				count++;
 
 				builder.append("\nPoint " + count + ": ");
-				
+
 				// print name of Point's Location
 				if (point.getLocation() != null) {
 					builder.append(point.getLocation().getName());
 				} else {
 					builder.append("NO LOCATION");
 				}
-				
+
 				builder.append(" (id: " + point.getId() + ")");
 			}
 		} else {
 			builder.append("\nNO POINTS");
 		}
-		
+
 		builder.append("\n*** END RelativeLocation ***");
 		return builder.toString();
 	}

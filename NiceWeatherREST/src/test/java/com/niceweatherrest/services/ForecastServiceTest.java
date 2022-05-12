@@ -64,76 +64,82 @@ class ForecastServiceTest {
 	}
 	
 	@Test
-	@DisplayName("ForecastService index()")
+	@DisplayName("ForecastService index() and count()")
 	void test_index() {
 		assertNotNull(forcSvc.index());
-		assertTrue(forcSvc.index().size() > 0);
+		assertTrue(forcSvc.count() > 0);
 	}
 	
-	@Test
-	@DisplayName("PeriodService update()")
-	void test_update() {
-		// Update and restore name
-		
-		// Settings
-		final String updatedType = "Updated Type";
-		final int forecastCount = forcSvc.index().size();
-		
-		// Find in DB
-		Forecast forecast = forcSvc.findById(forecastId);
-		assertNotNull(forecast);
-		final String initialType = forecast.getType();
-		
-		// Change locally
-		forecast.setType(updatedType);
-		
-		// Update on DB
-		Forecast updatedForecast = forcSvc.update(forecast);
-		assertNotNull(updatedForecast);
-		forecast = null;
-		Forecast foundForecast = forcSvc.findById(forecastId);
-		assertNotNull(foundForecast);
-		updatedForecast = null;
-		
-		// Verify
-		assertEquals(forecastId, foundForecast.getId());
-		assertEquals(updatedType, foundForecast.getType());
-		
-		// Revert locally
-		foundForecast.setType(initialType);
-		
-		// Revert on DB
-		Forecast revertedForecast = forcSvc.update(foundForecast);
-		assertNotNull(revertedForecast);
-		foundForecast = null;
-		
-		// Verify
-		assertEquals(forecastId, revertedForecast.getId());
-		assertEquals(initialType, revertedForecast.getType());
-		
-		// Verify nothing new created
-		assertEquals(forecastCount, forcSvc.index().size());
-	}
+//	@Test
+//	@DisplayName("ForecastService update()")
+//	void test_update() {
+//		// Update and restore name
+//		
+//		// Settings
+//		final String updatedType = "Updated Type";
+//		final int forecastCount = forcSvc.index().size();
+//		
+//		// Find in DB
+//		Forecast forecast = forcSvc.findById(forecastId);
+//		assertNotNull(forecast);
+//		final String initialType = forecast.getType();
+//		
+//		// Change locally
+//		forecast.setType(updatedType);
+//		
+//		// Update on DB
+//		Forecast updatedForecast = forcSvc.update(forecast);
+//		assertNotNull(updatedForecast);
+//		forecast = null;
+//		Forecast foundForecast = forcSvc.findById(forecastId);
+//		assertNotNull(foundForecast);
+//		updatedForecast = null;
+//		
+//		// Verify
+//		assertEquals(forecastId, foundForecast.getId());
+//		assertEquals(updatedType, foundForecast.getType());
+//		
+//		// Revert locally
+//		foundForecast.setType(initialType);
+//		
+//		// Revert on DB
+//		Forecast revertedForecast = forcSvc.update(foundForecast);
+//		assertNotNull(revertedForecast);
+//		foundForecast = null;
+//		
+//		// Verify
+//		assertEquals(forecastId, revertedForecast.getId());
+//		assertEquals(initialType, revertedForecast.getType());
+//		
+//		// Verify nothing new created
+//		assertEquals(forecastCount, forcSvc.index().size());
+//	}
 	
 	@Test
-	@DisplayName("ForecastService create, read, delete with Period")
-	void test_CR_D() {
-		// Create and delete new Period
+	@DisplayName("ForecastService CRUD with many Periods, 1 Geometry, and many Coordinates")
+	void test_CRUD_with_Period_Geometry_Coordinate() {
+		// 1: Create Forecast with many Periods, 1 Geometry, and many Coordinates and verify
+		// 2: Update Forecast's type, Geometry's type, and Coordinate latitude and longitude and verify
+		// 3: Delete all and verify
 		
 		// Settings
-		final int forecastCount = forcSvc.index().size();
-		final int pointCount = forcSvc.index().size();
-		final int periodCount = periodSvc.index().size();
-		final int geometryCount = geoSvc.index().size();
+		final int forecastCountInitial = forcSvc.index().size();
+		final int pointCountInitial = forcSvc.index().size();
+		final int periodCountInitial = periodSvc.index().size();
+		final int geometryCountInitial = geoSvc.index().size();
 		final int coordinateCount = coordSvc.index().size();
 		final int numGeometryCoordinates = 5;
 		final int numNewPeriods = 2;
-		final String forecastType = "New Type";
+		final String typeInitial = "New Type";
 		final String periodName = "New Name";
 		
-		// Create new Forecast
+		// ******
+		// STEP 1
+		// ******
+		
+		// 1.1: Create Forecast locally
 		Forecast forecast = new Forecast();
-		forecast.setType(forecastType);
+		forecast.setType(typeInitial);
 		
 		// Find Point in DB
 		Point point = pointSvc.findById(pointId);
@@ -191,7 +197,7 @@ class ForecastServiceTest {
 		assertNotNull(foundForecast);
 		
 		// Verify Forecast
-		assertEquals(forecastType, foundForecast.getType());
+		assertEquals(typeInitial, foundForecast.getType());
 		
 		// Find new Periods in DB and verify
 		assertEquals(numNewPeriods, foundForecast.getPeriods().size());
@@ -259,11 +265,11 @@ class ForecastServiceTest {
 		}
 		
 		// Verify nothing new remains
-		assertEquals(forecastCount, forcSvc.index().size());
-		assertEquals(geometryCount, geoSvc.index().size());
+		assertEquals(forecastCountInitial, forcSvc.index().size());
+		assertEquals(geometryCountInitial, geoSvc.index().size());
 		assertEquals(coordinateCount, coordSvc.index().size());
-		assertEquals(pointCount, pointSvc.index().size());
-		assertEquals(periodCount, periodSvc.index().size());
+		assertEquals(pointCountInitial, pointSvc.index().size());
+		assertEquals(periodCountInitial, periodSvc.index().size());
 	}
 
 	

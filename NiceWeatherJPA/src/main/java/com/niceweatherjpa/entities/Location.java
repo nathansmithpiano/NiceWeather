@@ -35,7 +35,7 @@ public class Location {
 
 	@OneToOne
 	@JoinColumn(name = "geometry_id")
-	@Cascade(CascadeType.ALL)
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	private Geometry geometry;
 
 	@ManyToOne
@@ -49,7 +49,7 @@ public class Location {
 	private List<Category> categories;
 
 	@OneToOne(mappedBy = "location")
-	@Cascade(CascadeType.ALL)
+	@Cascade({ CascadeType.MERGE })
 	private Point point;
 
 	public Location() {
@@ -86,7 +86,7 @@ public class Location {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
-		
+
 		if (geometry != null && geometry.getLocation() != this) {
 			geometry.setLocation(this);
 		}
@@ -98,7 +98,7 @@ public class Location {
 
 	public void setMountainRange(MountainRange mountainRange) {
 		this.mountainRange = mountainRange;
-		
+
 		if (mountainRange != null && !mountainRange.getLocations().contains(this)) {
 			mountainRange.addLocation(this);
 		}
@@ -125,7 +125,7 @@ public class Location {
 	public void removeCategory(Category category) {
 		if (categories != null && categories.contains(category)) {
 			categories.remove(category);
-			
+
 			if (category.getLocations() != null && category.getLocations().contains(this)) {
 				category.removeLocation(this);
 			}
@@ -137,11 +137,8 @@ public class Location {
 	}
 
 	public void setPoint(Point point) {
+		// only this, Point will update Location
 		this.point = point;
-		
-		if (point != null && point.getLocation() != this) {
-			point.setLocation(this);
-		}
 	}
 
 	@Override
@@ -227,7 +224,7 @@ public class Location {
 		} else {
 			builder.append("\nNO POINT");
 		}
-		
+
 		builder.append("\n*** END Location ***");
 		return builder.toString();
 	}

@@ -24,7 +24,7 @@ class ForecastTest {
 	private static EntityManager em;
 	private Forecast forecast1;
 	private Forecast forecast2;
-	
+
 	// Settings
 	private int forecast1Id = 1;
 	private String forecast1Url = "https://api.weather.gov/gridpoints/PUB/33,107/forecast";
@@ -39,17 +39,17 @@ class ForecastTest {
 	private int numGeometryCoordinates = 5;
 	private String geometryType = "Polygon";
 	private String pointUrl = "https://api.weather.gov/points/39.1177,-106.4453";
-	
+
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		emf = Persistence.createEntityManagerFactory("NiceWeatherJPA");
 	}
-	
+
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 		emf.close();
 	}
-	
+
 	@BeforeEach
 	void setUp() {
 		em = emf.createEntityManager();
@@ -58,7 +58,7 @@ class ForecastTest {
 		forecast2 = em.find(Forecast.class, forecast2Id);
 		assertNotNull(forecast2);
 	}
-	
+
 	@AfterEach
 	void tearDown() {
 		em.close();
@@ -76,7 +76,7 @@ class ForecastTest {
 		assertEquals(forecast2Url, forecast2.getUrl());
 		assertTrue(forecast2.isHourly());
 	}
-	
+
 	@Test
 	@DisplayName("Forecast Point mapping")
 	void test_Forecast_Point_mapping() {
@@ -89,7 +89,7 @@ class ForecastTest {
 		assertEquals(forecast2PointId, forecast2Point.getId());
 		assertEquals(pointUrl, forecast2Point.getIdUrl());
 	}
-	
+
 	@Test
 	@DisplayName("Forecast Geometry mapping")
 	void test_Forecast_Geometry_mapping() {
@@ -99,7 +99,7 @@ class ForecastTest {
 		assertEquals(forecast1GeometryId, forecast1Geometry.getId());
 		assertEquals(numGeometryCoordinates, forecast1Geometry.getCoordinates().size());
 		assertEquals(geometryType, forecast1Geometry.getType());
-		
+
 		// Verify forecast2
 		Geometry forecast2Geometry = forecast2.getGeometry();
 		assertNotNull(forecast2Geometry);
@@ -107,7 +107,7 @@ class ForecastTest {
 		assertEquals(numGeometryCoordinates, forecast2Geometry.getCoordinates().size());
 		assertEquals(geometryType, forecast2Geometry.getType());
 	}
-	
+
 	@Test
 	@DisplayName("Forecast multiple Period mapping")
 	void test_Forecast_Period_mapping() {
@@ -118,7 +118,7 @@ class ForecastTest {
 		assertEquals(forecast1PeriodCount, forecast1Periods.size());
 		// Verify first period is number 1
 		assertEquals(1, forecast1Periods.iterator().next().getNumber());
-		
+
 		// Verify forecast1
 		List<Period> forecast2Periods = forecast2.getPeriods();
 		assertNotNull(forecast2Periods);

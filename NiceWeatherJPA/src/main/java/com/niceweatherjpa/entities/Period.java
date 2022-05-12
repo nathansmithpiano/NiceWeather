@@ -26,7 +26,7 @@ public class Period {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private Integer number;
 
 	private String name;
@@ -67,11 +67,11 @@ public class Period {
 
 	@Column(name = "detailed_forecast")
 	private String detailedForecast;
-	
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "forecast_id")
-	@Cascade(CascadeType.MERGE)
+	@Cascade({ CascadeType.MERGE })
 	private Forecast forecast;
 
 	public Period() {
@@ -205,18 +205,15 @@ public class Period {
 	public void setDetailedForecast(String detailedForecast) {
 		this.detailedForecast = detailedForecast;
 	}
-	
+
 	public Forecast getForecast() {
 		return forecast;
 	}
 
 	public void setForecast(Forecast forecast) {
 		this.forecast = forecast;
-		
-		if (forecast != null && forecast.getPeriods() != null && !forecast.getPeriods().contains(this)) {
-			System.err.println("***** THIS RAN - setForecast");
-			forecast.addPeriod(this);
-		}
+
+		System.err.println("FORECAST " + forecast.getType() + " setForecast");
 	}
 
 	@Override
@@ -273,7 +270,7 @@ public class Period {
 		builder.append(shortForecast);
 		builder.append("\ndetailedForecast=");
 		builder.append(detailedForecast);
-		
+
 		// if Period has Forecast
 		if (forecast != null) {
 			// print Forecast id, normal/hourly, and Point id and Location name
@@ -281,24 +278,24 @@ public class Period {
 			builder.append("(id: " + forecast.getId());
 			builder.append(", " + (forecast.isHourly() ? "hourly" : "normal"));
 			builder.append(", Point: ");
-			
+
 			if (forecast.getPoint() != null) {
 				builder.append("id: " + forecast.getPoint().getId());
-				
+
 				if (forecast.getPoint().getLocation() != null) {
 					builder.append(", Location name: " + forecast.getPoint().getLocation().getName());
 				} else {
 					builder.append(", NO LOCATION");
 				}
-				
+
 			} else {
 				builder.append(" NO POINT");
 			}
-			
+
 		} else {
 			builder.append("\nNO FORECAST");
 		}
-		
+
 		builder.append("\n*** END Period ***");
 		return builder.toString();
 	}

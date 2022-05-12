@@ -64,23 +64,23 @@ public class Forecast {
 	private String elevationUnitCode;
 
 	private Double elevation;
-	
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "point_id")
-	@Cascade(CascadeType.MERGE)
+	@Cascade({ CascadeType.MERGE})
 	private Point point;
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
-	@Cascade(CascadeType.ALL)
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	private Geometry geometry;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "forecast")
+	@OneToMany(mappedBy = "forecast", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@Cascade(CascadeType.ALL)
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	private List<Period> periods;
 
 	public Forecast() {
@@ -198,17 +198,13 @@ public class Forecast {
 	public void setElevation(Double elevation) {
 		this.elevation = elevation;
 	}
-	
+
 	public Point getPoint() {
 		return point;
 	}
 
 	public void setPoint(Point point) {
 		this.point = point;
-		
-		if (point != null && point.getForecasts() != null && !point.getForecasts().contains(this)) {
-			point.addForecast(this);
-		}
 	}
 
 	public Geometry getGeometry() {
@@ -217,10 +213,6 @@ public class Forecast {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
-		
-		if (geometry != null && geometry.getForecasts() != null && !geometry.getForecasts().contains(this)) {
-			geometry.addForecast(this);
-		}
 	}
 
 	public List<Period> getPeriods() {
@@ -230,24 +222,27 @@ public class Forecast {
 	public void setPeriods(List<Period> periods) {
 		this.periods = periods;
 	}
-	
+
 	public void addPeriod(Period period) {
-		if (periods == null) {
-			periods = new ArrayList<>();
-		}
-		if (period != null && period.getForecast() != this) {
-			System.err.println("***** THIS RAN - addPeriod " + period.getName());
+		// only add if non-null
+		if (period != null) {
+			if (periods == null) {
+				periods = new ArrayList<>();
+			}
+			// add to both
 			periods.add(period);
 			period.setForecast(this);
+
+			System.err.println("PERIOD " + period.getNumber() + " addPeriod");
+
 		}
 	}
 
 	public void removePeriod(Period period) {
-		if (periods != null && periods.contains(period)) {
+		// only remove if non-null
+		if (period != null) {
 			periods.remove(period);
-			if (period.getForecast().equals(this)) {
-				period.setForecast(null);
-			}
+			period.setForecast(null);
 		}
 	}
 
@@ -273,7 +268,7 @@ public class Forecast {
 		StringBuilder builder = new StringBuilder();
 		builder.append("\n*** Forecast ***\nid=");
 		builder.append(id);
-		
+
 		builder.append("\nurl=");
 		builder.append(url);
 		builder.append("\nisHourly=");
@@ -298,7 +293,7 @@ public class Forecast {
 		builder.append(elevationUnitCode);
 		builder.append("\nelevation=");
 		builder.append(elevation);
-		
+
 		// if Forecast has Point
 		if (point != null) {
 			// print point.getLocation().getName() and id of Point
@@ -307,33 +302,33 @@ public class Forecast {
 		} else {
 			builder.append("\nNO POINT");
 		}
-		
+
 		// if Forecast has Geometry
 		if (geometry != null) {
 			builder.append("\nGeometry: ");
-			
+
 			// if Geometry has 5 Coordinates (should have 5)
 			if (geometry.getCoordinates() != null && geometry.getCoordinates().size() == 5) {
 				// Print coordinates in Geometry
 				Iterator<Coordinate> it = geometry.getCoordinates().iterator();
-				
+
 				while (it.hasNext()) {
 					Coordinate coordinate = it.next();
-					
+
 					// print id, latitude, and longitude of Coordinate
 					builder.append(" Coordinate (id: " + coordinate.getId());
 					builder.append(", latitude: " + coordinate.getLatitude());
 					builder.append(", longitude: " + coordinate.getLongitude() + ")");
 				}
-				
+
 			} else {
 				builder.append(" INVALID COORDINATES (should be 5), ERROR");
 			}
-			
+
 		} else {
 			builder.append("\nNO GEOMETRY");
 		}
-		
+
 		// if Forecast has periods
 		if (periods != null) {
 			// if number of periods is valid (14 or 156)
@@ -344,11 +339,11 @@ public class Forecast {
 			} else {
 				builder.append("\nINVALID NUMBER OF PERIODS (should be 14 or 156)");
 			}
-			
+
 		} else {
 			builder.append("\nNO PERIODS");
 		}
-		
+
 		builder.append("\n*** END Forecast ***");
 		return builder.toString();
 	}

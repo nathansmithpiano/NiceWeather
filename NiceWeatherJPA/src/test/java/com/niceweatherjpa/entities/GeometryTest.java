@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -112,7 +112,7 @@ class GeometryTest {
 	void test_Geometry_multiple_RelativeLocation_mapping() {
 		geometry = em.find(Geometry.class, geometryWithRelativeLocationId);
 		assertNotNull(geometry);
-		Set<RelativeLocation> relativeLocations = geometry.getRelativeLocations();
+		List<RelativeLocation> relativeLocations = geometry.getRelativeLocations();
 		assertNotNull(relativeLocations);
 		assertTrue(relativeLocations.size() > 0);
 		

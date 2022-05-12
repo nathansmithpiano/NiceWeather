@@ -59,8 +59,6 @@ class GeometryServiceTest {
 		// 5: Delete all and verify
 
 		// Settings
-		final Long geometryCountInitial = geoSvc.count();
-		final Long coordinateCountInitial = coordSvc.count();
 		final String typeInitial = "test new type";
 		final String typeUpdated = "test updated type";
 		final int numCoordinates = 100;
@@ -72,6 +70,10 @@ class GeometryServiceTest {
 		final int numCoordinatesToAdd = 500;
 		final double addedLatitude = 555.55;
 		final double addedLongitude = -666.66;
+		
+		// Used for verification
+		final Long geometryCountInitial = geoSvc.count();
+		final Long coordinateCountInitial = coordSvc.count();
 
 		// Verify before test
 		assertTrue(numCoordinatesToUpdate <= numCoordinates);
@@ -93,6 +95,7 @@ class GeometryServiceTest {
 		}
 
 		// 1.1: Verify Coordinates added locally
+		assertTrue(geometryInitial.getCoordinates().size() > 0);
 		assertEquals(numCoordinates, geometryInitial.getCoordinates().size());
 
 		// DB 1.1: *CREATE* Geometry and Coordinates in DB

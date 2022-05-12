@@ -88,7 +88,7 @@ public class Category {
 	public void removeLocation(Location location) {
 		if (locations != null && locations.contains(location)) {
 			locations.remove(location);
-			
+
 			if (location.getCategories() != null && location.getCategories().contains(this)) {
 				location.removeCategory(this);
 			}

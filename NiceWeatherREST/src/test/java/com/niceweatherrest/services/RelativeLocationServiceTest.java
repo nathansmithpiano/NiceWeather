@@ -22,9 +22,6 @@ import com.niceweatherjpa.entities.RelativeLocation;
 @SpringBootTest
 class RelativeLocationServiceTest {
 	
-	// Settings
-	private final int rLocId = 1;
-	
 	@Autowired
 	private RelativeLocationServiceImpl rlSvc;
 	
@@ -64,9 +61,6 @@ class RelativeLocationServiceTest {
 		// 4: Delete all and verify
 		
 		// Settings
-		final Long relativeLocationCountInitial = rlSvc.count();
-		final Long geometryCountInitial = geoSvc.count();
-		final Long coordinateCountInitial = coordSvc.count();
 		final String cityInitial = "New City";
 		final String cityUpdated = "Updated City";
 		final String geometryTypeUpdated = "Updated Type";
@@ -75,6 +69,11 @@ class RelativeLocationServiceTest {
 		final double longitudeInitial = -222.22;
 		final double latitudeUpdated = 333.33;
 		final double longitudeUpdated = -444.44;
+		
+		// Used for verification
+		final Long relativeLocationCountInitial = rlSvc.count();
+		final Long geometryCountInitial = geoSvc.count();
+		final Long coordinateCountInitial = coordSvc.count();
 		
 		// ******
 		// STEP 1
@@ -106,7 +105,7 @@ class RelativeLocationServiceTest {
 		assertTrue(geometryInitial.getCoordinates().size() > 0);
 		assertEquals(numGeometryCoordinates, geometryInitial.getCoordinates().size());
 		
-		// DB 1.1: *CREATE* RelativeLocation, Geometry, and Coordinate in DB
+		// DB 1.1: *CREATE* Create RelativeLocation, Geometry, and Coordinate in DB
 		RelativeLocation newRLoc = rlSvc.create(rLocInitial);
 		
 		// 1.1: No longer needed, set initial objects to null

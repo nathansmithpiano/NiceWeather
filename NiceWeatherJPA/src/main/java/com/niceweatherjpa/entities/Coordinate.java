@@ -19,11 +19,11 @@ public class Coordinate {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private Double latitude;
 
 	private Double longitude;
-	
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "geometry_id")
@@ -67,7 +67,7 @@ public class Coordinate {
 //			geometry.addCoordinate(this);
 //		}
 	}
-	
+
 	public Integer getGeometryId() {
 		if (geometry != null) {
 			return geometry.getId();
@@ -78,7 +78,7 @@ public class Coordinate {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(geometry, id);
+		return Objects.hash(id, latitude, longitude);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class Coordinate {
 		if (getClass() != obj.getClass())
 			return false;
 		Coordinate other = (Coordinate) obj;
-		return Objects.equals(geometry, other.geometry) && id == other.id;
+		return id == other.id && Objects.equals(latitude, other.latitude) && Objects.equals(longitude, other.longitude);
 	}
 
 	@Override
@@ -102,8 +102,8 @@ public class Coordinate {
 		builder.append(latitude);
 		builder.append("\nlongitude=");
 		builder.append(longitude);
-		
-		//if Coordinate has Geometry
+
+		// if Coordinate has Geometry
 		if (geometry != null) {
 			// print ID of Geometry
 			builder.append("\nGeometry ID: ");

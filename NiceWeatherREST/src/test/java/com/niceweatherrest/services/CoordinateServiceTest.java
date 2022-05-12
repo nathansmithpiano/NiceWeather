@@ -49,6 +49,8 @@ class CoordinateServiceTest {
 		final int coordinateId = 1;
 		final double updatedLatitude = 111.11;
 		final double updatedLongitude = -222.22;
+		
+		// Used for verification
 		final long coordinateCountInitial = coordSvc.count();
 		
 		// Find in DB and set updates

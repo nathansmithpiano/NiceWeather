@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -26,7 +28,7 @@ public class Point {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@Column(name = "id_url")
 	private String idUrl;
 
@@ -54,24 +56,28 @@ public class Point {
 
 	@Column(name = "radar_station")
 	private String radarStation;
-	
+
 	@JsonIgnore
 	@OneToOne
+	@Cascade(CascadeType.MERGE)
 	@JoinColumn(name = "location_id")
 	private Location location;
 
 	@JsonIgnore
 	@OneToOne
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	@JoinColumn(name = "geometry_id")
 	private Geometry geometry;
-	
+
 	@JsonIgnore
 	@OneToOne
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	@JoinColumn(name = "relative_location_id")
 	private RelativeLocation relativeLocation;
-	
+
 	@JsonIgnore
-	@OneToMany(mappedBy = "point")
+	@OneToMany(mappedBy = "point", orphanRemoval = true)
+	@Cascade({ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DELETE })
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Forecast> forecasts;
 
@@ -166,17 +172,15 @@ public class Point {
 	public void setRadarStation(String radarStation) {
 		this.radarStation = radarStation;
 	}
-	
+
 	public Location getLocation() {
 		return location;
 	}
 
 	public void setLocation(Location location) {
 		this.location = location;
-		
-		if (location != null && location.getPoint() != this) {
-			location.setPoint(this);
-		}
+		// set to Location's Point (Point will update Location)
+		location.setPoint(this);
 	}
 
 	public Geometry getGeometry() {
@@ -185,8 +189,9 @@ public class Point {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
-		
-		if (geometry != null && geometry.getPoint() != this) {
+
+		// set to Geometry
+		if (geometry != null) {
 			geometry.setPoint(this);
 		}
 	}
@@ -197,8 +202,8 @@ public class Point {
 
 	public void setRelativeLocation(RelativeLocation relativeLocation) {
 		this.relativeLocation = relativeLocation;
-		
-		if (relativeLocation != null && !relativeLocation.getPoints().contains(this)) {
+		// add to RelativeLocation's Points (Point is owner of RelativeLocation)
+		if (relativeLocation != null) {
 			relativeLocation.addPoint(this);
 		}
 	}
@@ -212,22 +217,22 @@ public class Point {
 	}
 
 	public void addForecast(Forecast forecast) {
-		if (forecasts == null) {
-			forecasts = new ArrayList<>();
-		}
-		if (forecast != null && !forecasts.contains(forecast)) {
+		// only add if non-null
+		if (forecast != null) {
+			if (forecasts == null) {
+				forecasts = new ArrayList<>();
+			}
+			// add to both
 			forecasts.add(forecast);
 			forecast.setPoint(this);
 		}
 	}
 
 	public void removeForecast(Forecast forecast) {
-		if (forecasts != null && forecasts.contains(forecast)) {
+		// only remove if non-null
+		if (forecast != null) {
 			forecasts.remove(forecast);
-			
-			if (forecast != null && forecast.getPoint() == this) {
-				forecast.setPoint(null);
-			}
+			forecast.setPoint(null);
 		}
 	}
 
@@ -245,7 +250,7 @@ public class Point {
 		if (getClass() != obj.getClass())
 			return false;
 		Point other = (Point) obj;
-		return Objects.equals(id, other.id);
+		return id == other.id;
 	}
 
 	@Override
@@ -274,7 +279,7 @@ public class Point {
 		builder.append("\nradarStation=");
 		builder.append(radarStation);
 		builder.append("\n*** END Point ***");
-		
+
 		// if Point has Location
 		if (location != null) {
 			// print name and id of Location
@@ -283,7 +288,7 @@ public class Point {
 		} else {
 			builder.append("\nNO LOCATION");
 		}
-		
+
 		// if Point has Geometry
 		if (geometry != null) {
 			builder.append("\nGeometry: ");
@@ -304,7 +309,7 @@ public class Point {
 		} else {
 			builder.append("\nNO GEOMETRY");
 		}
-		
+
 		// if Point has RelativeLocation
 		if (relativeLocation != null) {
 			// print ID of RelativeLocation
@@ -313,26 +318,26 @@ public class Point {
 		} else {
 			builder.append("\nNO RELATIVE LOCATION");
 		}
-		
-		// if Point has forecasts 
+
+		// if Point has forecasts
 		if (forecasts != null && forecasts.size() > 0) {
 			// if number of forecasts is valid (2)
 			if (forecasts.size() == 2) {
-				//print hourly/normal, id, and number of periods for each Forecast
+				// print hourly/normal, id, and number of periods for each Forecast
 				for (Forecast fc : forecasts) {
 					builder.append("\nForecast (");
 					builder.append(fc.isHourly() ? "hourly" : "normal");
 					builder.append(", id: " + fc.getId() + "): ");
 					builder.append(fc.getPeriods().size() + " periods");
 				}
-				
+
 			} else {
 				builder.append("\nINVALID NUMBER OF FORECASTS (should be 2");
 			}
 		} else {
 			builder.append("\nNO FORECASTS");
 		}
-		
+
 		return builder.toString();
 	}
 
