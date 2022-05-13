@@ -24,6 +24,7 @@
 >- **GET /zones/{type}/{zoneId}** - Returns metadata about a given zone
 
 <hr>
+
 ## Unused Endpoints:
 Weather.gov API includes many more endpoints than are used in NiceWeather.
 #### Alerts
@@ -72,6 +73,7 @@ Weather.gov API includes many more endpoints than are used in NiceWeather.
 >- **GET /zones/forecast/{zoneId}/stations** - Returns a list of observation stations for a given zone
 
 <hr>
+
 ## From [Weather.gov's Documentation](https://www.weather.gov/documentation/services-web-api):
 >### Formats
 >Endpoints typically have a GeoJSON default format, given the inclusion of geometry data. See the Specification tab for details on each endpoint. Below are common formats available by the API.  
