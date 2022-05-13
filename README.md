@@ -1,6 +1,6 @@
 ## NiceWeather
 
-### [Docs](/Docs)
+### [Docs](/Docs/README.md)
 * Item 1
 * Item 2
 
