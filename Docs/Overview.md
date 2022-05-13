@@ -73,12 +73,12 @@ Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 ```
 
 ##### This ** Point ** contains several URL's for other JSON data:
-- [this point](Docs/Weather.gov API/point.md)
-- [forecastOffice](Docs/Weather.gov API/forecastOffice.md)
-- [forecast](Docs/Weather.gov API/forecast.md)
-- [forecastHourly](Docs/Weather.gov API/forecastHourly.md)
-- [forecastGridData](Docs/Weather.gov API/forecastGridData.md)
-- [observationStations](Docs/Weather.gov API/observationStations.md)
-- [forecastZone](Docs/Weather.gov API/forecastZone.md)
-- [county](Docs/Weather.gov API/county.md)
-- [fireWeatherZone](Docs/Weather.gov API/fireWeatherZone.md)
+- [this point](Docs/Weather.govAPI/point.md)
+- [forecastOffice](Docs/Weather.govAPI/forecastOffice.md)
+- [forecast](Docs/Weather.govAPI/forecast.md)
+- [forecastHourly](Docs/Weather.govAPI/forecastHourly.md)
+- [forecastGridData](Docs/Weather.govAPI/forecastGridData.md)
+- [observationStations](Docs/Weather.govAPI/observationStations.md)
+- [forecastZone](Docs/Weather.govAPI/forecastZone.md)
+- [county](Docs/Weather.govAPI/county.md)
+- [fireWeatherZone](Docs/Weather.govAPI/fireWeatherZone.md)
