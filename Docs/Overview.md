@@ -73,7 +73,7 @@ Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 ```
 
 ##### This ** Point ** contains several URL's for other JSON data:
-- [this point](Docs/Weather.govAPI/point.md)
+- [point](Docs/Weather.govAPI/point.md)
 - [forecastOffice](Docs/Weather.govAPI/forecastOffice.md)
 - [forecast](Docs/Weather.govAPI/forecast.md)
 - [forecastHourly](Docs/Weather.govAPI/forecastHourly.md)
