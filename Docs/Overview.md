@@ -72,13 +72,13 @@ Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 }
 ```
 
-##### This ** Point ** contains several URL's for other data:
-- ['"@id": "https://api.weather.gov/points/39.1177,-106.4453"'](Docs/Weather.gov API/point.md)
-- ["forecastOffice": "https://api.weather.gov/offices/PUB"](Docs/Weather.gov API forecastOffice.md)
-- ["forecast": "https://api.weather.gov/gridpoints/PUB/33,107/forecast"](Docs/Weather.gov API/forecast.md)
-- ["forecastHourly": "https://api.weather.gov/gridpoints/PUB/33,107/forecast/hourly"](Docs/Weather.gov API/forecastHourly)
-- ["forecastGridData": "https://api.weather.gov/gridpoints/PUB/33,107"](Docs/Weather.gov API/forecastGridData)
-- ["observationStations": "https://api.weather.gov/gridpoints/PUB/33,107/stations"](Docs/Weather.gov API/observationStations)
-- ["forecastZone": "https://api.weather.gov/zones/forecast/COZ060"](Docs/Weather.gov API/forecastZone)
-- ["county": "https://api.weather.gov/zones/county/COC065"](Docs/Weather.gov API/county)
-- ["fireWeatherZone": "https://api.weather.gov/zones/fire/COZ220"](Docs/Weather.gov API/fireWeatherZone)
+##### This ** Point ** contains several URL's for other JSON data:
+- [this point](Docs/Weather.gov API/point.md)
+- [forecastOffice](Docs/Weather.gov API/forecastOffice.md)
+- [forecast](Docs/Weather.gov API/forecast.md)
+- [forecastHourly](Docs/Weather.gov API/forecastHourly.md)
+- [forecastGridData](Docs/Weather.gov API/forecastGridData.md)
+- [observationStations](Docs/Weather.gov API/observationStations.md)
+- [forecastZone](Docs/Weather.gov API/forecastZone.md)
+- [county](Docs/Weather.gov API/county.md)
+- [fireWeatherZone](Docs/Weather.gov API/fireWeatherZone.md)
