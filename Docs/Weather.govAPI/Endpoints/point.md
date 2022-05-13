@@ -1,6 +1,8 @@
 ### Weather.gov API: Point
-##### https://api.weather.gov/points/39.11771,-106.445335
-##### 5/13/22
+* Example: Mt. Elbert
+* Updated: 5/13/22
+
+#### https://api.weather.gov/points/39.11771,-106.445335
 ```
 {
     "@context": [
@@ -97,3 +99,7 @@
     }
 }
 ```
+
+<hr>
+
+[Up](README.md) | [Next](forecastOffice.md)
