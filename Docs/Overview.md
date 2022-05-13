@@ -4,7 +4,7 @@ JSON Data is requested from the National Weather Service's free Weather.gov API.
 Endpoint: https://api.weather.gov/points/39.11771,-106.445335
 Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 
-##### @context: schema details for a Point based on GeoJSON
+##### @context: Schema details for a Point based on GeoJSON
 ```
 "city": "s:addressLocality",
 "state": "s:addressRegion",
@@ -14,7 +14,7 @@ Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 } ...
 ```
 
-##### details particular to a Point
+##### Details particular to a Point
 ```
 "id": "https://api.weather.gov/points/39.1177,-106.4453",
 "type": "Feature",
@@ -27,7 +27,7 @@ Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 }
 ```
 
-##### properties for a Point
+##### Properties for a Point
 ```
 "properties": {
         "@id": "https://api.weather.gov/points/39.1177,-106.4453",
@@ -72,6 +72,13 @@ Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 }
 ```
 
-This ** Point ** contains several URL's for other data:
--- ["forecastOffice": "https://api.weather.gov/offices/PUB"](Docs/forecastOffice)
---
+##### This ** Point ** contains several URL's for other data:
+- ["@id": "https://api.weather.gov/points/39.1177,-106.4453"](Docs/Weather.gov API/point.md)
+- ["forecastOffice": "https://api.weather.gov/offices/PUB"](Docs/Weather.gov API forecastOffice.md)
+- ["forecast": "https://api.weather.gov/gridpoints/PUB/33,107/forecast"](Docs/Weather.gov API/forecast.md)
+- ["forecastHourly": "https://api.weather.gov/gridpoints/PUB/33,107/forecast/hourly"](Docs/Weather.gov API/forecastHourly)
+- ["forecastGridData": "https://api.weather.gov/gridpoints/PUB/33,107"](Docs/Weather.gov API/forecastGridData)
+- ["observationStations": "https://api.weather.gov/gridpoints/PUB/33,107/stations"](Docs/Weather.gov API/observationStations)
+- ["forecastZone": "https://api.weather.gov/zones/forecast/COZ060"](Docs/Weather.gov API/forecastZone)
+- ["county": "https://api.weather.gov/zones/county/COC065"](Docs/Weather.gov API/county)
+- ["fireWeatherZone": "https://api.weather.gov/zones/fire/COZ220"](Docs/Weather.gov API/fireWeatherZone)
