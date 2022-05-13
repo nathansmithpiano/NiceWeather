@@ -7,9 +7,10 @@
     - id
     - properties.@id
     - **Point:** properties.fireWeatherZone
+- **Endpoint:** https://api.weather.gov/zones/fire/COZ220
 <hr>
 
-##### Forward Endpoints in JSON
+#### Forward Endpoints in JSON
 ```
 "forecastOffices": [
     "https://api.weather.gov/offices/PUB"
@@ -19,7 +20,7 @@
 ```
 <hr>
 
-#### https://api.weather.gov/zones/fire/COZ220
+#### JSON
 ```
 {
     "@context": {
