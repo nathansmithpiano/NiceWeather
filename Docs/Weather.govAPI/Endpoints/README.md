@@ -11,7 +11,8 @@ From [Weather.gov's Documentation](https://www.weather.gov/documentation/service
 > - OXML: application/vnd.noaa.obs+xml
 > - CAP: application/cap+xml
 > - ATOM: application/atom+xml  
-> - Accept: application/cap+xml
+>
+> Accept: application/cap+xml
 
 - [Point](point.md)
 - [Forecast Office](forecastOffice.md)
