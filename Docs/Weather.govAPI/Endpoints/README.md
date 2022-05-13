@@ -23,19 +23,8 @@
 #### [Fire Weather Zone](fireWeatherZone.md)
 >- **GET /zones/{type}/{zoneId}** - Returns metadata about a given zone
 
-## From [Weather.gov's Documentation](https://www.weather.gov/documentation/services-web-api):
->### Formats
->Endpoints typically have a GeoJSON default format, given the inclusion of geometry data. See the Specification tab for details on each endpoint. Below are common formats available by the API.  
-> - GeoJSON: application/geo+json
-> - JSON-LD: application/ld+json
-> - DWML: application/vnd.noaa.dwml+xml
-> - OXML: application/vnd.noaa.obs+xml
-> - CAP: application/cap+xml
-> - ATOM: application/atom+xml  
->
-> Accept: application/cap+xml
-
-### Unused Endpoints:
+<hr>
+## Unused Endpoints:
 Weather.gov API includes many more endpoints than are used in NiceWeather.
 #### Alerts
 >- **GET /alerts** - Returns all alerts
@@ -81,3 +70,16 @@ Weather.gov API includes many more endpoints than are used in NiceWeather.
 >- **GET /zones/{type}/{zoneId}/forecast** - Returns the current zone forecast for a given zone
 >- **GET /zones/forecast/{zoneId}/observations** - Returns a list of observations for a given zone
 >- **GET /zones/forecast/{zoneId}/stations** - Returns a list of observation stations for a given zone
+
+<hr>
+## From [Weather.gov's Documentation](https://www.weather.gov/documentation/services-web-api):
+>### Formats
+>Endpoints typically have a GeoJSON default format, given the inclusion of geometry data. See the Specification tab for details on each endpoint. Below are common formats available by the API.  
+> - GeoJSON: application/geo+json
+> - JSON-LD: application/ld+json
+> - DWML: application/vnd.noaa.dwml+xml
+> - OXML: application/vnd.noaa.obs+xml
+> - CAP: application/cap+xml
+> - ATOM: application/atom+xml  
+>
+> Accept: application/cap+xml
