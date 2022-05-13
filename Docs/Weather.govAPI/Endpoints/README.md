@@ -10,7 +10,7 @@ From [Weather.gov's Documentation](https://www.weather.gov/documentation/service
 > - DWML: application/vnd.noaa.dwml+xml
 > - OXML: application/vnd.noaa.obs+xml
 > - CAP: application/cap+xml
-> - ATOM: application/atom+xml
+> - ATOM: application/atom+xml  
 > - Accept: application/cap+xml
 
 - [Point](point.md)
