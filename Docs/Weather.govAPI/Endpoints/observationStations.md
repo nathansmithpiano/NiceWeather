@@ -1,4 +1,7 @@
-### Weather.gov API: Forecast Hourly
+[Up](README.md) | [Back](forecastGridData.md) | [Next](forecastZone.md)
+<hr>
+
+### Weather.gov API: Observation Stations
 * Example: Mt. Elbert
 * Updated: 5/13/22
 

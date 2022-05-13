@@ -1,3 +1,6 @@
+[Up](README.md) | [Back](forecastOffice.md) | [Next](forecastHourly.md)
+<hr>
+
 ### Weather.gov API: Forecast
 * Example: Mt. Elbert
 * Updated: 5/13/22

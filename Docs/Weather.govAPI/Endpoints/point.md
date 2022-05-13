@@ -1,3 +1,6 @@
+[Up](README.md) | [Next](forecastOffice.md)
+<hr>
+
 ### Weather.gov API: Point
 * Example: Mt. Elbert
 * Updated: 5/13/22
