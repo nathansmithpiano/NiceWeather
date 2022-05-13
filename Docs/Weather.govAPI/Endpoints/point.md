@@ -26,6 +26,7 @@
 
 ### Data Fields
 | Field | Description |
+| --- | --- |
 | id | URL to this endpoint |
 | type | "Feature" |
 | geometry | **new Geometry entity, single coordinate** |
