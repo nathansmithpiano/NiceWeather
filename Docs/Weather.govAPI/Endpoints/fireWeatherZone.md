@@ -2,8 +2,17 @@
 <hr>
 
 ### Weather.gov API: Fire Weather Zone
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- Example: Mt. Elbert
+- Updated: 5/13/22
+
+##### Forward Endpoints in JSON
+```
+"forecastOffices": [
+    "https://api.weather.gov/offices/PUB"
+]
+
+"observationStations": []
+```
 
 #### https://api.weather.gov/zones/fire/COZ220
 ```
