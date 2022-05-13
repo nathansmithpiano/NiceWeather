@@ -4,7 +4,7 @@ Data is imported using the National Weather Service's free Weather.gov API.
 Endpoint: https://api.weather.gov/points/39.11771,-106.445335
 Using GPS coordinates (latitude, longitude), Weather.gov API returns:
 
-** @context: schema details based on GeoJSON **
+##### @context: schema details based on GeoJSON
 Example:
 ```
 "city": "s:addressLocality",
