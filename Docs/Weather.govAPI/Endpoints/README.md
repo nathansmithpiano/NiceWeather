@@ -4,9 +4,7 @@
 ## Weather.gov API Endpoints:
 From [Weather.gov's Documentation](https://www.weather.gov/documentation/services-web-api):
 >Endpoints typically have a GeoJSON default format, given the inclusion of geometry data. See the Specification tab for details on each endpoint. Below are common formats available by the API.  
-- GeoJSON: application/geo+json
-- JSON-LD: application/ld+json
-- DWML: application/vnd.noaa.dwml+xml
+>- GeoJSON: application/geo+json  - JSON-LD: application/ld+json  - DWML: application/vnd.noaa.dwml+xml
 - OXML: application/vnd.noaa.obs+xml
 - CAP: application/cap+xml
 - ATOM: application/atom+xml
