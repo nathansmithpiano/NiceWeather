@@ -23,7 +23,7 @@
 #### [Fire Weather Zone](fireWeatherZone.md)
 >- **GET /zones/{type}/{zoneId}** - Returns metadata about a given zone
 
-### From [Weather.gov's Documentation](https://www.weather.gov/documentation/services-web-api):
+## From [Weather.gov's Documentation](https://www.weather.gov/documentation/services-web-api):
 >### Formats
 >Endpoints typically have a GeoJSON default format, given the inclusion of geometry data. See the Specification tab for details on each endpoint. Below are common formats available by the API.  
 > - GeoJSON: application/geo+json
