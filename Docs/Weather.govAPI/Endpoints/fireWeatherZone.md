@@ -4,6 +4,11 @@
 ### Weather.gov API: Fire Weather Zone
 - Example: Mt. Elbert
 - Updated: 5/13/22
+- Referenced By:
+    - Fire Weather Zone: id
+    - Fire Weather Zone: properties.@id
+    - Point: properties.fireWeatherZone
+<hr>
 
 ##### Forward Endpoints in JSON
 ```
@@ -13,6 +18,7 @@
 
 "observationStations": []
 ```
+<hr>
 
 #### https://api.weather.gov/zones/fire/COZ220
 ```
