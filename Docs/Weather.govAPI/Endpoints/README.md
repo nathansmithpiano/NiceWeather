@@ -31,13 +31,13 @@ Weather.gov API includes many more endpoints than are used in NiceWeather.
 
 ### Unused Endpoints:
 #### Alerts
->- *GET /alerts* - Returns all alerts
->- *GET /alerts/active* - Returns all currently active alerts
->- *GET /alerts/active/count* - Returns info on the number of active alerts
->- *GET /alerts/active/zone/{zoneId}* - Returns active alerts for the given NWS public zone or county
->- *GET /alerts/active/area/{area}* - Returns active alerts for the given area (state or marine area)
->- *GET /alerts/active/region/{region}* - Returns active alerts for the given marine region
->- *GET /alerts/types* - Returns a list of alert types
->- *GET /alerts/{id}* - Returns a specific alert
+>- **GET /alerts** - Returns all alerts
+>- **GET /alerts/active** - Returns all currently active alerts
+>- **GET /alerts/active/count** - Returns info on the number of active alerts
+>- **GET /alerts/active/zone/{zoneId}** - Returns active alerts for the given NWS public zone or county
+>- **GET /alerts/active/area/{area}** - Returns active alerts for the given area (state or marine area)
+>- **GET /alerts/active/region/{region}** - Returns active alerts for the given marine region
+>- **GET /alerts/types** - Returns a list of alert types
+>- **GET /alerts/{id}** - Returns a specific alert
 #### Glossary
->- *GET /glossary* - Returns glossary terms
+>- **GET /glossary** - Returns glossary terms
