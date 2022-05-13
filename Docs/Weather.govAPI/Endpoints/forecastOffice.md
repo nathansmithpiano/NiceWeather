@@ -1,9 +1,8 @@
 ### Weather.gov API: Forecast Office
-    Example: Mt. Elbert
+* Example: Mt. Elbert
+* Updated: 5/13/22
 
-    https://api.weather.gov/offices/PUB
-    
-    5/13/22
+#### https://api.weather.gov/offices/PUB
 ```
 {
     "@context": {
