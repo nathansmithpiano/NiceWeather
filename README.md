@@ -1,7 +1,6 @@
 ## NiceWeather
-#### Created by Nathan Smith
 
-### Overview
+### [Docs](/Docs)
 * Item 1
 * Item 2
 
