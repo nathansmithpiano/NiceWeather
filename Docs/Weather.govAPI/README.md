@@ -3,4 +3,4 @@
 
 ## Weather.gov API
 
-### [Weather.gov API Endpoints](Endpoints/README.md)
+### [Endpoints](Endpoints/README.md)
