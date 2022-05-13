@@ -25,11 +25,11 @@
 <hr>
 
 ### Data Fields
-| Field | Description |
-| --- | --- |
-| id | URL to this endpoint |
-| type | "Feature" |
-| geometry | **new Geometry entity, single coordinate** |
+| Field | Field | Description |
+| --- | --- | --- |
+|   | id | URL to this endpoint |
+|   | type | "Feature" |
+|   | geometry | **new Geometry entity, single coordinate** |
 | properties | @id | URL to this endpoint |
 | properties | @type | "wx:Point" (String) |
 | properties | cwa | officeId |
