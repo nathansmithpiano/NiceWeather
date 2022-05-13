@@ -21,6 +21,7 @@
     "forecastZone": "https://api.weather.gov/zones/forecast/COZ060",
     "county": "https://api.weather.gov/zones/county/COC065",
     "fireWeatherZone": "https://api.weather.gov/zones/fire/COZ220"
+}
 ```
 <hr>
 
