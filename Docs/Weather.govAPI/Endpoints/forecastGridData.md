@@ -2,10 +2,24 @@
 <hr>
 
 ### Weather.gov API: Forecast Grid Data
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/gridpoints/PUB/33,107
+- **Endpoint Referenced By:**
+    - id
+    - properties.@id
+    - **Point:** properties.forecastGridData
+<hr>
 
-#### https://api.weather.gov/gridpoints/PUB/33,107
+#### Forward Endpoints in JSON
+```
+"properties": {
+    "forecastOffice": "https://api.weather.gov/offices/PUB"
+}
+```
+<hr>
+
+#### JSON
 ```
 {
     "@context": [

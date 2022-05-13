@@ -2,10 +2,29 @@
 <hr>
 
 ### Weather.gov API: Forecast Zone
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/zones/forecast/COZ060
+- **Endpoint Referenced By:**
+    - id
+    - properties.@id
+    - **Point:** properties.forecastZone
+<hr>
 
-#### https://api.weather.gov/zones/forecast/COZ060
+#### Forward Endpoints in JSON
+```
+"forecastOffices": [
+    "https://api.weather.gov/offices/PUB"
+]
+
+"observationStations": [
+    "https://api.weather.gov/stations/KASE",
+    ...
+]
+```
+<hr>
+
+#### JSON
 ```
 {
     "@context": {

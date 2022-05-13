@@ -2,10 +2,20 @@
 <hr>
 
 ### Weather.gov API: Forecast Hourly
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/gridpoints/PUB/33,107/forecast/hourly
+- **Endpoint Referenced By:**
+    - **Point:** properties.forecastHourly
+<hr>
 
-#### https://api.weather.gov/gridpoints/PUB/33,107/forecast/hourly
+#### Forward Endpoints in JSON
+```
+(none)
+```
+<hr>
+
+#### JSON
 ```
 {
     "@context": [

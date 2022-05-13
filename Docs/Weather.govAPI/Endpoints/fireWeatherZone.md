@@ -3,17 +3,19 @@
 ### Weather.gov API: Fire Weather Zone
 - **Example:** Mt. Elbert
 - **Updated:** 5/13/22
-- **Referenced By:**
+- **Endpoint:** https://api.weather.gov/zones/fire/COZ220
+- **Endpoint Referenced By:**
     - id
     - properties.@id
     - **Point:** properties.fireWeatherZone
-- **Endpoint:** https://api.weather.gov/zones/fire/COZ220
+    - **Observation Station:** properties.fireWeatherZone
 <hr>
 
 #### Forward Endpoints in JSON
 ```
 "forecastOffices": [
-    "https://api.weather.gov/offices/PUB"
+    "https://api.weather.gov/offices/PUB",
+    ...
 ]
 
 "observationStations": []

@@ -2,10 +2,28 @@
 <hr>
 
 ### Weather.gov API: Forecast Office
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:**https://api.weather.gov/offices/PUB
+- **Endpoint Referenced By:**
+    - id
+    - properties.@id
+    - **Forecast Office:** parentOrganization (different Forecast Office)
+    - **Point:** properties.forecastOffice
+    - **Forecast Grid Data:** properties.forecastGridData
+    - **Forecast Zone:** properties.forecastOffices[]
+    - **Fire Weather Zone:** properties.forecastOffices[]
+<hr>
 
-#### https://api.weather.gov/offices/PUB
+#### Forward Endpoints in JSON
+```
+"sameAs": "https://www.weather.gov/pub"
+
+"parentOrganization": "https://api.weather.gov/offices/CRH"
+```
+<hr>
+
+#### JSON
 ```
 {
     "@context": {

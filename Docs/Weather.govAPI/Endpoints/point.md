@@ -2,10 +2,32 @@
 <hr>
 
 ### Weather.gov API: Point
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/points/39.11771,-106.445335 *{latitude},{longitude}*
+- **Endpoint Referenced By:**
+    - id
+    - properties.@id
+    - **Point:** properties.fireWeatherZone
+<hr>
 
-#### https://api.weather.gov/points/39.11771,-106.445335
+#### Forward Endpoints in JSON
+```
+"properties": {
+    "forecastOffice": "https://api.weather.gov/offices/PUB",
+    "forecast": "https://api.weather.gov/gridpoints/PUB/33,107/forecast",
+    "forecastHourly": "https://api.weather.gov/gridpoints/PUB/33,107/forecast/hourly",
+    "forecastGridData": "https://api.weather.gov/gridpoints/PUB/33,107",
+    "observationStations": "https://api.weather.gov/gridpoints/PUB/33,107/stations",
+    "forecastZone": "https://api.weather.gov/zones/forecast/COZ060",
+    "county": "https://api.weather.gov/zones/county/COC065",
+    "fireWeatherZone": "https://api.weather.gov/zones/fire/COZ220"
+```
+<hr>
+
+#### JSON
+
+####
 ```
 {
     "@context": [

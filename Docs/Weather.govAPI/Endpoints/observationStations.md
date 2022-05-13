@@ -1,11 +1,30 @@
-[Up](README.md) | [Back](forecastGridData.md) | [Next](forecastZone.md)
+[Up](README.md) | [Back](observationStation.md) | [Next](forecastZone.md)
 <hr>
 
 ### Weather.gov API: Observation Stations
-* Example: Mt. Elbert
-* Updated: 5/13/22
+### Weather.gov API: Fire Weather Zone
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/gridpoints/PUB/33,107/stations
+- **Endpoint Referenced By:**
+    - **Point:** properties.observationStations
+- **COLLECTION**
+    - features[] = each observationStation JSON (without @context)
+    - observationStations[] - forward endpoint for each observationStation
+<hr>
 
-#### https://api.weather.gov/gridpoints/PUB/33,107/stations
+#### Forward Endpoints in JSON
+```
+"observationStations": [
+    "https://api.weather.gov/stations/KLXV",
+    ...
+]
+```
+<hr>
+
+#### JSON
+
+####
 ```
 {
     "@context": [

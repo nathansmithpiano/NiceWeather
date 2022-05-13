@@ -2,10 +2,20 @@
 <hr>
 
 ### Weather.gov API: Forecast
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/gridpoints/PUB/33,107/forecast
+- **Endpoint Referenced By:**
+    - **Point:** properties.forecast
+    - **Observation Station:** properties.forecast
+<hr>
 
-#### https://api.weather.gov/gridpoints/PUB/33,107/forecast
+#### Forward Endpoints in JSON
+```
+```
+<hr>
+
+#### JSON
 ```
 {
     "@context": [

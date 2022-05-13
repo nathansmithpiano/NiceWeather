@@ -2,10 +2,27 @@
 <hr>
 
 ### Weather.gov API: County
-* Example: Mt. Elbert
-* Updated: 5/13/22
+- **Example:** Mt. Elbert
+- **Updated:** 5/13/22
+- **Endpoint:** https://api.weather.gov/zones/fire/COZ220
+- **Endpoint Referenced By:**
+    - id
+    - properties.@id
+    - **Observation Station** properties.county
+<hr>
 
-#### https://api.weather.gov/zones/county/COC065
+#### Forward Endpoints in JSON
+```
+"forecastOffices": [
+    "https://api.weather.gov/offices/PUB",
+    ...
+]
+
+"observationStations": []
+```
+<hr>
+
+#### JSON
 ```
 {
     "@context": {
