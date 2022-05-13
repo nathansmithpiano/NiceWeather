@@ -1,3 +1,6 @@
+[Next](Docs/README.md)
+<hr>
+
 ## NiceWeather
 
-### [Docs](/Docs/README.md)
+### [Docs](Docs/README.md)
