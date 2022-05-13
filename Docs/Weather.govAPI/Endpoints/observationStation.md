@@ -7,6 +7,7 @@
 - **Endpoint Referenced By:**
     - id
     - properties.@id
+    - **Forecast Office:** approvedObservationStations[]
     - **Fire Weather Zone:** properties.observationStations[]
 - **INCLUDED IN COLLECTIONS**
     - **Observation Stations:** features[] (shows all JSON for each station without @context)

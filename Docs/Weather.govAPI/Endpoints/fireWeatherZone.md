@@ -8,6 +8,7 @@
     - id
     - properties.@id
     - **Point:** properties.fireWeatherZone
+    - **Forecast Office:** responsibleFireZones[]
     - **Observation Station:** properties.fireWeatherZone
 <hr>
 
@@ -18,7 +19,9 @@
     ...
 ]
 
-"observationStations": []
+"observationStations": [
+    (none listed in example)
+]
 ```
 <hr>
 

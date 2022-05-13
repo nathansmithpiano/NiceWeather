@@ -2,7 +2,6 @@
 <hr>
 
 ### Weather.gov API: Observation Stations
-### Weather.gov API: Fire Weather Zone
 - **Example:** Mt. Elbert
 - **Updated:** 5/13/22
 - **Endpoint:** https://api.weather.gov/gridpoints/PUB/33,107/stations

@@ -8,18 +8,33 @@
 - **Endpoint Referenced By:**
     - id
     - properties.@id
-    - **Forecast Office:** parentOrganization (different Forecast Office)
     - **Point:** properties.forecastOffice
-    - **Forecast Grid Data:** properties.forecastGridData
+    - **Forecast Office:** parentOrganization (different Forecast Office)
+    - **Forecast Grid Data:** properties.forecastOffice
     - **Forecast Zone:** properties.forecastOffices[]
     - **Fire Weather Zone:** properties.forecastOffices[]
 <hr>
 
 #### Forward Endpoints in JSON
 ```
-"sameAs": "https://www.weather.gov/pub"
-
-"parentOrganization": "https://api.weather.gov/offices/CRH"
+"sameAs": "https://www.weather.gov/pub",
+"parentOrganization": "https://api.weather.gov/offices/CRH",
+"responsibleCounties": [
+    "https://api.weather.gov/zones/county/COC003",
+    ...
+],
+"responsibleForecastZones": [
+    "https://api.weather.gov/zones/forecast/COZ058",
+    ...
+],
+"responsibleFireZones": [
+    "https://api.weather.gov/zones/fire/COZ220",
+    ...
+],
+"approvedObservationStations": [
+    "https://api.weather.gov/stations/K04V",
+    ...
+]
 ```
 <hr>
 

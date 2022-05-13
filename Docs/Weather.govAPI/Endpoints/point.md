@@ -4,11 +4,10 @@
 ### Weather.gov API: Point
 - **Example:** Mt. Elbert
 - **Updated:** 5/13/22
-- **Endpoint:** https://api.weather.gov/points/39.11771,-106.445335 *{latitude},{longitude}*
+- **Endpoint:** https://api.weather.gov/points/39.11771,-106.445335 {latitude},{longitude}
 - **Endpoint Referenced By:**
     - id
     - properties.@id
-    - **Point:** properties.fireWeatherZone
 <hr>
 
 #### Forward Endpoints in JSON

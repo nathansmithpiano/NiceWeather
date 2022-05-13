@@ -1,15 +1,15 @@
 #### Weather.gov API Endpoints:
 
-- [point](point.md)
-- [forecastOffice](forecastOffice.md)
-- [forecast](forecast.md)
-- [forecastHourly](forecastHourly.md)
-- [forecastGridData](forecastGridData.md)
-- [observationStation](observationStation.md)
-- [observationStations](observationStations.md)
-- [forecastZone](forecastZone.md)
-- [county](county.md)
-- [fireWeatherZone](fireWeatherZone.md)
+- [Point](point.md)
+- [Forecast Office](forecastOffice.md)
+- [Forecast](forecast.md)
+- [Forecast Hourly](forecastHourly.md)
+- [Forecast Grid Data](forecastGridData.md)
+- [Observation Station](observationStation.md)
+- [Observation Stations (*used only by Point)](observationStations.md)
+- [Forecast Zone](forecastZone.md)
+- [County](county.md)
+- [Fire Weather Zone](fireWeatherZone.md)
 
 <hr>
 

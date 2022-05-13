@@ -9,12 +9,14 @@
     - id
     - properties.@id
     - **Point:** properties.forecastZone
+    - **Forecast Office:** responsibleForecastZones[]
 <hr>
 
 #### Forward Endpoints in JSON
 ```
 "forecastOffices": [
-    "https://api.weather.gov/offices/PUB"
+    "https://api.weather.gov/offices/PUB",
+    ...
 ]
 
 "observationStations": [
