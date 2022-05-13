@@ -29,6 +29,13 @@
 ### All endpoints
 Weather.gov API includes many more endpoints than are used in NiceWeather.
 
+### Used Endpoints:
+#### Grid Points
+>- **GET /gridpoints/{wfo}/{x},{y}** - Returns raw numerical forecast data for a 2.5km grid area
+>- **GET /gridpoints/{wfo}/{x},{y}/forecast** - Returns a textual forecast for a 2.5km grid area
+>- **GET /gridpoints/{wfo}/{x},{y}/forecast/hourly** - Returns a textual hourly forecast for a 2.5km grid area
+>- **GET /gridpoints/{wfo}/{x},{y}/stations** - Returns a list of observation stations usable for a given 2.5km grid area
+
 ### Unused Endpoints:
 #### Alerts
 >- **GET /alerts** - Returns all alerts
