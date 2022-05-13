@@ -47,12 +47,9 @@
 | properties | fireWeatherZone | URL to another endpoint |
 | properties | timeZone | Time Zone (String) |
 | properties | radarStation | Zone ID (String) |
+<hr>
 
-
-
-```
-
-## JSON
+### JSON
 ```
 {
     "@context": [
