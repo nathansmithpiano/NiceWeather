@@ -1,5 +1,4 @@
 [Up](README.md) | [Back](county.md)
-<hr>
 
 ### Weather.gov API: Fire Weather Zone
 - **Example:** Mt. Elbert
